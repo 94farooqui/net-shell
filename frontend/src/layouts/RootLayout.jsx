@@ -8,7 +8,7 @@ const RootLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 bg-[#36353f] text-white p-6 overflow-auto">
+      <div className="flex-1 bg-[#273138] text-white p-6 overflow-auto">
         <Outlet /> {/* This will render the matched route's component */}
       </div>
     </div>

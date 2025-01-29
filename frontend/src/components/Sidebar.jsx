@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, LayoutDashboard, Server, Users, Key, History, Save, Notebook } from "lucide-react";
+import { Menu,SquareTerminal, LayoutDashboard, Server, Users, Key, History, Save, Notebook } from "lucide-react";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const menuItems = [
     { name: "Dashboard", path: "/", icon: <LayoutDashboard size={20} /> },
+    { name: "Terminal", path: "/terminal", icon: <SquareTerminal size={20} /> },
     { name: "Hosts", path: "/hosts", icon: <Server size={20} /> },
     { name: "Groups", path: "/groups", icon: <Users size={20} /> },
     { name: "Credentials Manager", path: "/credentials-manager", icon: <Key size={20} /> },

@@ -11,6 +11,7 @@ import CredentialsManager from "./pages/CredentialsManager";
 import History from "./pages/History";
 import SavedCommands from "./pages/SavedCommands";
 import Notes from "./pages/Notes";
+import Terminal from "./pages/Terminal";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -22,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Home />} />
+          <Route path="terminal" element={<Terminal />} />
           <Route path="hosts" element={<Hosts />} />
           <Route path="groups" element={<Groups />} />
           <Route path="credentials-manager" element={<CredentialsManager />} />
