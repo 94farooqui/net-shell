@@ -12,6 +12,7 @@ import History from "./pages/History";
 import SavedCommands from "./pages/SavedCommands";
 import Notes from "./pages/Notes";
 import Terminal from "./pages/Terminal";
+import NewHost from "./pages/NewHost";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -24,6 +25,7 @@ function App() {
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Home />} />
           <Route path="terminal" element={<Terminal />} />
+          <Route path="hosts/new" element={<NewHost />} />
           <Route path="hosts" element={<Hosts />} />
           <Route path="groups" element={<Groups />} />
           <Route path="credentials-manager" element={<CredentialsManager />} />

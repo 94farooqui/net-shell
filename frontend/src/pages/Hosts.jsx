@@ -1,4 +1,9 @@
-import { Plus, Server, Router, Shield, HardDrive, Globe } from "lucide-react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
+import HostCard from "../components/HostCard";
+import NewHost from "./NewHost";
+import { useNavigate } from "react-router-dom";
 
 // Sample data (Replace with API call in real implementation)
 const hosts = [
@@ -6,26 +11,26 @@ const hosts = [
   { id: 2, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
   { id: 3, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
   { id: 4, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
-  { id: 1, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
-  { id: 2, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
-  { id: 3, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
-  { id: 4, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
-  { id: 1, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
-  { id: 2, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
-  { id: 3, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
-  { id: 4, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
-  { id: 1, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
-  { id: 2, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
-  { id: 3, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
-  { id: 4, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
-  { id: 1, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
-  { id: 2, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
-  { id: 3, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
-  { id: 4, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
-  { id: 1, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
-  { id: 2, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
-  { id: 3, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
-  { id: 4, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
+  { id: 5, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
+  { id: 6, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
+  { id: 7, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
+  { id: 8, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
+  { id: 9, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
+  { id: 10, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
+  { id: 11, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
+  { id: 12, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
+  { id: 13, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
+  { id: 14, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
+  { id: 15, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
+  { id: 16, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
+  { id: 17, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
+  { id: 18, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
+  { id: 19, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
+  { id: 20, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
+  { id: 21, name: "Router-1", ipAddress: "10.10.1.1", type: "router", connectionMethod: "ssh-key", lastConnected: "2025-01-20" },
+  { id: 22, name: "Switch-2", ipAddress: "10.10.2.1", type: "switch", connectionMethod: "password", lastConnected: "2025-01-19" },
+  { id: 23, name: "Firewall", ipAddress: "10.10.3.1", type: "firewall", connectionMethod: "none", lastConnected: "2025-01-15" },
+  { id: 24, name: "Linux Server", ipAddress: "10.10.4.1", type: "server", connectionMethod: "ssh-key", lastConnected: "2025-01-21" },
 ];
 
 const handleSearchInputChange = (e) => {
@@ -38,13 +43,23 @@ const handleSearch = (e) => {
 
 
 const Hosts = () => {
+
+  const navigate = useNavigate()
+
+  const getHosts = async () => {
+    const data = await axios.get("http://localhost:5000/api/hosts")
+  }
+
+  useEffect(()=>{
+    getHosts()
+  },[])
   return (
     <div className="p-6">
       {/* Navbar */}
       
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Hosts</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition">
+        <button onClick={()=>navigate("new")} className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition">
           <Plus size={16} /> New Host
         </button>
       </div>
@@ -62,34 +77,11 @@ const Hosts = () => {
           <HostCard key={host.id} host={host} />
         ))}
       </div>
+      
     </div>
   );
 };
 
-// Host Card Component
-const HostCard = ({ host }) => {
-  const { name, ipAddress, type, connectionMethod, lastConnected } = host;
 
-  // Icons for different device types
-  const typeIcons = {
-    router: <Router size={20} className="text-green-400" />,
-    switch: <Globe size={20} className="text-blue-400" />,
-    firewall: <Shield size={20} className="text-red-400" />,
-    server: <Server size={20} className="text-yellow-400" />,
-    other: <HardDrive size={20} className="text-gray-400" />,
-  };
-
-  return (
-    <div className="bg-gray-800 text-white p-4 rounded-lg shadow-md border border-gray-700">
-      <div className="flex items-center gap-3">
-        {typeIcons[type] || typeIcons.other}
-        <h3 className="text-lg font-semibold">{name}</h3>
-      </div>
-      <p className="text-gray-400 text-sm mt-1">{ipAddress}</p>
-      <p className="text-gray-300 text-sm mt-1">Connection: {connectionMethod}</p>
-      {lastConnected && <p className="text-gray-500 text-xs mt-2">Last Connected: {lastConnected}</p>}
-    </div>
-  );
-};
 
 export default Hosts;

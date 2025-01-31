@@ -1,5 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import NavbarProvider from "../context/NavbarProvider";
+import Navbar from "../components/Navbar";
 
 const RootLayout = () => {
   return (
@@ -8,8 +10,14 @@ const RootLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 bg-[#273138] text-white p-6 overflow-auto">
-        <Outlet /> {/* This will render the matched route's component */}
+      <div className="relative flex-1 bg-[#202024] text-white overflow-auto">
+        <NavbarProvider>
+          <Navbar/>
+          <div  className="px-6 pt-12">
+          <Outlet /> {/* This will render the matched route's component */}
+          </div>
+       
+        </NavbarProvider>
       </div>
     </div>
   );
