@@ -14,6 +14,7 @@ const historyRouter = require('./routes/history.js');
 const hostsRouter = require('./routes/hosts.js');
 const notesRouter = require('./routes/notes.js');
 const terminalRouter = require('./routes/terminal.js');
+const connectDB = require('./config/db.js');
 
 
 // Load environment variables
@@ -24,6 +25,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+//Connect to Database
+connectDB()
 
 
 

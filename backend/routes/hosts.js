@@ -1,6 +1,11 @@
 const express = require('express');
-const { getAllHosts } = require('../controllers/hosts');
+const { getHosts, getOneHost, updateOneHost, addOneHost, deleteOneHost } = require('../controllers/hosts.js');
 const router = express.Router();
 
-router.get("/", getAllHosts)
+router.get("/", getHosts)
+router.get("/:HostId", getOneHost)
+router.post("/",addOneHost)
+router.put("/:HostId", updateOneHost)
+router.delete(":/HostId", deleteOneHost)
+
 module.exports = router;
