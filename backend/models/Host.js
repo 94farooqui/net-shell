@@ -22,7 +22,8 @@ const HostSchema = new mongoose.Schema({
   },
   group: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'DeviceGroup'
+    ref: 'DeviceGroup',
+    default: 'none'
   },
   connectionMethod: {
     type: String,
