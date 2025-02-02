@@ -15,6 +15,7 @@ const defaultHost = {
 
 
 const EditHost = () => {
+    
     const location = useLocation()
     const host = location.state.host
     console.log(host)

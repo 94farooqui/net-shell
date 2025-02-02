@@ -1,10 +1,23 @@
 const HostGroup = require("../models/HostGroup");
+const User = require("../models/User");
 
 // Get all host groups
 const getGroups = async (req, res) => {
   try {
     const groups = await HostGroup.find().populate("devices owner");
     res.status(200).json(groups);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getGroupNames = async (req, res) => {
+  try {
+    console.log("request for group names for user", req.user.userId)
+    //const user = await User.findById(req.user.userId).populate({ path: 'groups', select: 'name' });
+    const groups = await HostGroup.find({owner:req.user.userId}).select("name")
+    console.log("Groups",groups)
+    return res.status(200).json(groups);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -26,12 +39,17 @@ const addOneGroup = async (req, res) => {
 
   console.log(req.body)
   try {
-    const newGroup = new HostGroup(req.body);
-    await newGroup.save();
+    const newGroup = new HostGroup({ ...req.body, owner: req.user.userId });
+    const groupAdded = await newGroup.save();
+    if (groupAdded) {
+      const user = await User.findById(req.user.userId)
+      user.groups.push(groupAdded._id)
+      await user.save()
+    }
     res.status(201).json(newGroup);
   } catch (error) {
     console.log("error", error)
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.dmessage });
   }
 };
 
@@ -48,6 +66,7 @@ const updateOneGroup = async (req, res) => {
 
 // Delete a host group by ID
 const deleteOneGroup = async (req, res) => {
+  console.log(req.params.GroupId)
   try {
     const deletedGroup = await HostGroup.findByIdAndDelete(req.params.GroupId);
     if (!deletedGroup) return res.status(404).json({ message: "Group not found" });
@@ -57,4 +76,4 @@ const deleteOneGroup = async (req, res) => {
   }
 };
 
-module.exports = {getGroups,getOneGroup,addOneGroup,updateOneGroup,deleteOneGroup}
+module.exports = { getGroups, getGroupNames, getOneGroup, addOneGroup, updateOneGroup, deleteOneGroup }

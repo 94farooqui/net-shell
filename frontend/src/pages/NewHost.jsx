@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SquareX } from 'lucide-react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -10,23 +10,53 @@ const defaultHost = {
     name: "",
     ipAddress: "",
     type: "",
+    group:"",
     description: "",
 }
 
+const token = localStorage.getItem("net_shell_token")
 
 const NewHost = () => {
     const [newHost, setNewHost] = useState(defaultHost)
+    const [hostGroups,setHostGroups] = useState([])
     const navigate = useNavigate()
+    name
+    const fetchHostGroups = async () => {
+        try{
+            console.log("requesting")
+            const response = await axios.get("http://localhost:5000/api/groups/names",{
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            if(response.status == 200){
+                console.log(response.data)
+                setHostGroups( (prev) => [...prev, ...response.data])
+            }
+            //console.log(response)
+        }
+        catch(error){
+            console.log(error)
+        }
+    }
 
 
 const handleAddHostSubmit = async (e) => {
     e.preventDefault()
     console.log(newHost)
-    const response = await axios.post("http://localhost:5000/api/hosts", newHost)
+    const response = await axios.post("http://localhost:5000/api/hosts", newHost,{
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    })
     if(response.status == 201){
         navigate("/hosts")
     }
 }
+
+useEffect(()=>{
+    fetchHostGroups()
+},[])
 
 
     return (
@@ -47,6 +77,14 @@ const handleAddHostSubmit = async (e) => {
                         {hostTypes.map(type => <option key={type} value={type}>{type}</option>)}
                     </select>
                 </div>
+                
+                <div  className='flex-1 flex flex-col gap-y-2'>
+                    <label>Group</label>
+                    <select className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, group: e.target.value })}>
+                        {hostGroups.map(group => <option key={group._id} value={group._id}>{group.name}</option>)}
+                    </select>
+                </div>
+
                 <div  className='flex-1 flex flex-col gap-y-2'>
                     <label>Description</label>
                     <textarea className='w-full bg-gray-800 p-2 rounded-md border border-gray-700 resize-none' onChange={(e) => setNewHost({ ...newHost, description: e.target.value })} rows={3} />

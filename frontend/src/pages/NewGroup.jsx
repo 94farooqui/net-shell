@@ -11,6 +11,7 @@ const defaultGroup = {
     description: "",
   }
 
+const token = localStorage.getItem("net_shell_token")
 
 const NewGroup = () => {
     const [newGroup, setNewGroup] = useState(defaultGroup)
@@ -20,7 +21,11 @@ const NewGroup = () => {
 const handleAddGroupSubmit = async (e) => {
     e.preventDefault()
     console.log(newGroup)
-    const response = await axios.post("http://localhost:5000/api/groups", newGroup)
+    const response = await axios.post("http://localhost:5000/api/groups", newGroup,{
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    })
     if(response.status == 201){
         navigate("/groups")
     }

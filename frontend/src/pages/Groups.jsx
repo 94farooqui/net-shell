@@ -1,7 +1,8 @@
 import axios from "axios";
-import { Plus, Folder, MapPin, Package } from "lucide-react";
+import { Plus} from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import GroupCard from "../components/GroupCard";
 
 // Sample data (Replace with API call in real implementation)
 // const groups = [
@@ -10,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 //   { id: 3, name: "Security Devices", description: "Firewalls and security appliances", location: "London", project: "CyberSec", devices: [6, 7, 8, 9] },
 //   { id: 4, name: "IoT Lab", description: "Smart devices and IoT testing", location: "Berlin", project: "IoT Research", devices: [10, 11] },
 // ];
+const token = localStorage.getItem("net_shell_token")
 
 const Groups = () => {
   const navigate = useNavigate()
@@ -17,7 +19,11 @@ const Groups = () => {
   const [loading,setLoading] = useState(true)
 
   const getGroups = async () => {
-    const response = await axios.get("http://localhost:5000/api/groups")
+    const response = await axios.get("http://localhost:5000/api/groups",{
+      headers:{
+          Authorization: `Bearer ${token}`
+      }
+  })
     if(response.status == 200){
       setGroups(response.data)
       setLoading(false)
@@ -45,7 +51,9 @@ const Groups = () => {
       {/* Groups Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {groups.map((group) => (
-          <GroupCard key={group.id} group={group} />
+          <Link to={`edit/${group._id}`} key={group._id}>
+          <GroupCard  group={group} />
+          </Link>
         ))}
       </div>
     </div>
@@ -53,25 +61,4 @@ const Groups = () => {
 };
 
 // Group Card Component
-const GroupCard = ({ group }) => {
-  const { name, description, location, project, devices } = group;
-
-  return (
-    <div className="bg-gray-800 text-white p-4 rounded-lg shadow-md border border-gray-700">
-      <div className="flex items-center gap-3">
-        <Folder size={20} className="text-yellow-400" />
-        <h3 className="text-lg font-semibold">{name}</h3>
-      </div>
-      <p className="text-gray-400 text-sm mt-1">{description}</p>
-      <div className="flex items-center gap-2 text-gray-300 text-sm mt-2">
-        <MapPin size={16} className="text-green-400" /> {location}
-      </div>
-      <div className="flex items-center gap-2 text-gray-300 text-sm mt-1">
-        <Package size={16} className="text-blue-400" /> {project}
-      </div>
-      <p className="text-gray-500 text-xs mt-2">Devices: {devices.length}</p>
-    </div>
-  );
-};
-
 export default Groups;
