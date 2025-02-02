@@ -1,9 +1,10 @@
 // Host Card Component
+import axios from "axios";
 import { Plus, Server, Router, Shield, HardDrive, Globe, EllipsisVertical } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-const HostCard = ({ host }) => {
+const HostCard = ({ host, refetchHosts }) => {
     const [showMenu, setShowMenu] = useState(false)
     const menuRef = useRef(null)
     const { name, ipAddress, type, connectionMethod, lastConnected } = host;
@@ -16,6 +17,13 @@ const HostCard = ({ host }) => {
         server: <Server size={20} className="text-yellow-400" />,
         other: <HardDrive size={20} className="text-gray-400" />,
     };
+
+    const handleDelete = async (e) => {
+        const response = await axios.delete(`http://localhost:5000/api/hosts/${host._id}`)
+        if(response.status == 200){
+            refetchHosts()
+        }
+    }
 
     useEffect(()=>{
         const handleOutSideClick = (event) => {
@@ -36,8 +44,8 @@ const HostCard = ({ host }) => {
             {showMenu && <div ref={menuRef} className="absolute bg-gray-900/80 top-4 right-6 border border-gray-700 rounded-md">
                 <ul className="text-xs text-gray-400">
                     <Link><li className="px-4 py-2 hover:bg-gray-700">Connect</li></Link>
-                    <Link><li className="px-4 py-2 hover:bg-gray-700 border-y border-gray-700">Edit</li></Link>
-                    <Link><li className="px-4 py-2 hover:bg-gray-700">Delete</li></Link>
+                    <Link to={`edit/${host._id}`} state={{host}}><li className="px-4 py-2 hover:bg-gray-700 border-y border-gray-700">Edit</li></Link>
+                    <button onClick={handleDelete}><li className="px-4 py-2 hover:bg-gray-700">Delete</li></button>
                 </ul></div>}
             <div className="flex items-center gap-3">
                 {typeIcons[type] || typeIcons.other}

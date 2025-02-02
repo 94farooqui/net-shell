@@ -2,12 +2,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
-  username: {
+  name: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
-    lowercase: true
   },
   email: {
     type: String,
@@ -28,6 +26,10 @@ const UserSchema = new mongoose.Schema({
   devices: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Device'
+  }],
+  groups: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'HostGroup'
   }]
 }, { 
   timestamps: true,

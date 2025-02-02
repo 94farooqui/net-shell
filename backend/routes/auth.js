@@ -2,19 +2,20 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
+const User = require('../models/User');
+const { newUserDefaultActions } = require('../lib/newUserDefaults');
 const router = express.Router();
 
 // Register a new user
-router.post('/register', async (req, res) => {
-  const { username, password, email } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+router.post('/signup', async (req, res) => {
+  const { name, password, email } = req.body;
+  // const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const result = await pool.query(
-      'INSERT INTO users (username, password_hash, email) VALUES ($1, $2, $3) RETURNING *',
-      [username, hashedPassword, email]
-    );
-    res.status(201).json(result.rows[0]);
+    const user = new User({name, password, email})
+    await user.save()
+    newUserDefaultActions(user)
+    return res.status(201).json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Registration failed' });
@@ -23,15 +24,14 @@ router.post('/register', async (req, res) => {
 
 // Login a user
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    const user = result.rows[0];
+    const user = await User.findOne({email: email});
 
-    if (user && await bcrypt.compare(password, user.password_hash)) {
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.json({ token });
+    if (user && await bcrypt.compare(password, user.password)) {
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      res.status(201).json({ token });
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }

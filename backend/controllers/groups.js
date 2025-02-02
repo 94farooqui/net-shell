@@ -23,11 +23,14 @@ const getOneGroup = async (req, res) => {
 
 // Add a new host group
 const addOneGroup = async (req, res) => {
+
+  console.log(req.body)
   try {
     const newGroup = new HostGroup(req.body);
     await newGroup.save();
     res.status(201).json(newGroup);
   } catch (error) {
+    console.log("error", error)
     res.status(400).json({ message: error.message });
   }
 };

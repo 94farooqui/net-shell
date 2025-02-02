@@ -12,7 +12,7 @@ const HostSchema = new mongoose.Schema({
   },
   type: { 
     type: String, 
-    enum: ['router', 'switch', 'firewall', 'server', 'other'],
+    enum: ['Router', 'Switch', 'Firewall', 'Server', 'Other'],
     required: true 
   },
   credentials: {
@@ -20,9 +20,14 @@ const HostSchema = new mongoose.Schema({
     password: { type: String, select: false }, // Exclude from default queries
     sshKey: { type: String, select: false }
   },
+  // owner: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'User',
+  //   // required: true
+  // },
   group: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'DeviceGroup',
+    ref: 'HostGroup',
     default: 'none'
   },
   connectionMethod: {

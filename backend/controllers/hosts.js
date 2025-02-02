@@ -2,10 +2,13 @@ const Host = require("../models/Host");
 const HostGroup = require("../models/HostGroup");
 
 const getHosts = async (req, res) => {
+  console.log("user ",req.user)
   try {
-    const hosts = await Host.find().populate("group");
-    res.status(200).json(hosts);
+    console.log("Request for hosts")
+    const hosts = await Host.find({owner:req.user.userId}).populate("group");
+    return res.status(200).json(hosts);
   } catch (error) {
+    console.log("Error", error)
     res.status(500).json({ message: error.message });
   }
 };
@@ -28,9 +31,9 @@ const addOneHost = async (req, res) => {
     if (!req.body.group) {
       const defaultHostGroup = new HostGroup({ name: "Default" })
       const group = await defaultHostGroup.save()
-      const newHost = new Host({...req.body, group:group});
+      const newHost = new Host({...req.body, group:group, owner:req.user.userId});
       await newHost.save();
-      res.status(201).json(newHost);
+      return res.status(201).json(newHost);
     }
 
   } catch (error) {
@@ -41,6 +44,7 @@ const addOneHost = async (req, res) => {
 
 // Update an existing host by ID
 const updateOneHost = async (req, res) => {
+  console.log("Update request")
   try {
     const updatedHost = await Host.findByIdAndUpdate(req.params.HostId, req.body, { new: true, runValidators: true });
     if (!updatedHost) return res.status(404).json({ message: "Host not found" });
@@ -56,7 +60,7 @@ const deleteOneHost = async (req, res) => {
   try {
     const deletedHost = await Host.findByIdAndDelete(req.params.HostId);
     if (!deletedHost) return res.status(404).json({ message: "Host not found" });
-    res.status(200).json({ message: "Host deleted successfully" });
+    return res.status(200).json({ message: "Host deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
