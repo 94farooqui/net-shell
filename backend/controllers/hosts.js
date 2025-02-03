@@ -3,16 +3,17 @@ const HostGroup = require("../models/HostGroup");
 const User = require("../models/User");
 
 const getHosts = async (req, res) => {
-  console.log("user ",req.user)
+  console.log("user ", req.user)
   try {
-      console.log("request for group names for user", req.user.userId)
-      //const user = await User.findById(req.user.userId).populate({ path: 'groups', select: 'name' });
-      const groups = await HostGroup.find({owner:req.user.userId}).populate("devices");
-      console.log("Groups",groups)
-      return res.status(200).json(groups);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    console.log("request for group names for user", req.user.userId)
+    //const user = await User.findById(req.user.userId).populate({ path: 'groups', select: 'name' });
+    //const groups = await HostGroup.find({owner:req.user.userId, $expr: {$gt : [{$size: "$devices"}, 0]}}).populate("devices");
+    const groups = await HostGroup.find({ owner: req.user.userId }).populate("devices").sort({name:1});
+    console.log("Groups", groups)
+    return res.status(200).json(groups);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
   // try {
   //   console.log("Request for hosts")
   //   const hosts = await Host.find({owner:req.user.userId}).populate("group");
@@ -23,24 +24,24 @@ const getHosts = async (req, res) => {
   // }
 
 
-    // try {
-    //   // Find the user and populate the groups they belong to
-    //   const user = await User.findById(req.user.userId).populate('groups');
-    //   if (!user) {
-    //     return { success: false, message: "User not found" };
-    //   }
-  
-    //   // Extract the group IDs from the user's groups
-    //   const groupIds = user.groups.map(group => group._id);
-  
-    //   // Find all hosts that belong to the user's groups
-    //   const hosts = await Host.find({ group: { $in: groupIds } });
-    //   return res.status(200).json(hosts);
-    //   //return { success: true, data: hosts };
-    // } catch (error) {
-    //   console.error("Error fetching hosts:", error);
-    //   return { success: false, message: "Server error" };
-    // }
+  // try {
+  //   // Find the user and populate the groups they belong to
+  //   const user = await User.findById(req.user.userId).populate('groups');
+  //   if (!user) {
+  //     return { success: false, message: "User not found" };
+  //   }
+
+  //   // Extract the group IDs from the user's groups
+  //   const groupIds = user.groups.map(group => group._id);
+
+  //   // Find all hosts that belong to the user's groups
+  //   const hosts = await Host.find({ group: { $in: groupIds } });
+  //   return res.status(200).json(hosts);
+  //   //return { success: true, data: hosts };
+  // } catch (error) {
+  //   console.error("Error fetching hosts:", error);
+  //   return { success: false, message: "Server error" };
+  // }
 
 };
 
@@ -62,13 +63,13 @@ const addOneHost = async (req, res) => {
     if (!req.body.group) {
       const defaultHostGroup = new HostGroup({ name: "Default" })
       const group = await defaultHostGroup.save()
-      const newHost = new Host({...req.body, group:group, owner:req.user.userId});
+      const newHost = new Host({ ...req.body, group: group, owner: req.user.userId });
       await newHost.save();
       return res.status(201).json(newHost);
     }
-    const newHost = new Host({...req.body, owner:req.user.userId});
+    const newHost = new Host({ ...req.body, owner: req.user.userId });
     const hostAdded = await newHost.save();
-    if(hostAdded){
+    if (hostAdded) {
       const groupUpdate = await HostGroup.findById(hostAdded.group)
       groupUpdate.devices.push(hostAdded._id)
       await groupUpdate.save()
@@ -83,11 +84,25 @@ const addOneHost = async (req, res) => {
 
 // Update an existing host by ID
 const updateOneHost = async (req, res) => {
-  console.log("Update request")
+  // console.log("Update request", req.body)
   try {
-    const updatedHost = await Host.findByIdAndUpdate(req.params.HostId, req.body, { new: true, runValidators: true });
-    if (!updatedHost) return res.status(404).json({ message: "Host not found" });
-    res.status(200).json(updatedHost);
+    // const updatedHost = await Host.findByIdAndUpdate(req.params.HostId, req.body, { new: true, runValidators: true });
+    // if (!updatedHost) return res.status(404).json({ message: "Host not found" });
+    const newHostData = req.body
+    const oldHostData = await Host.findById(req.body._id)
+
+    console.log("Old host data" , oldHostData)
+    console.log("New host data" , newHostData)
+
+    //updating corresponding host group
+    if (oldHostData.group !== newHostData.group) {
+      await HostGroup.findByIdAndUpdate(oldHostData.group, { $pull: { devices: oldHostData._id } })
+      await HostGroup.findByIdAndUpdate(newHostData.group, { $addToSet: { devices: newHostData._id } })
+    }
+
+    const updatedHost = await Host.findByIdAndUpdate(req.params.HostId, newHostData, { new: true, runValidators: true });
+
+    return res.status(200).json(updatedHost);
   } catch (error) {
     console.log("Error", error)
     res.status(400).json({ message: error.message });

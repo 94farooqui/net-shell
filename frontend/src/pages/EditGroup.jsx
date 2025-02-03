@@ -60,7 +60,11 @@ const EditGroup = () => {
     const handleAddGroupSubmit = async (e) => {
         e.preventDefault()
         console.log(newGroup)
-        const response = await axios.put(`http://localhost:5000/api/groups/${groupId}`, newGroup)
+        const response = await axios.put(`http://localhost:5000/api/groups/${groupId}`, newGroup,{
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        })
         if (response.status == 200) {
             navigate("/groups")
         }

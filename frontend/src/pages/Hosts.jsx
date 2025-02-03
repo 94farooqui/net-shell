@@ -39,8 +39,8 @@ const handleSearch = (e) => {};
 
 const Hosts = () => {
   const token = localStorage.getItem("net_shell_token");
-  console.log(token);
-  const [hosts, setHosts] = useState([]);
+  //console.log(token);
+  const [groupNames, setGroupNames] = useState([]);
   const [hostGroups, setHostGroups] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +53,8 @@ const Hosts = () => {
       },
     });
     if (response.status == 200) {
-      console.log(response.data);
+      //console.log(response.data);
+      setGroupNames(response.data.map(group => ({id:group._id, name:group.name})))
       setHostGroups(response.data);
       setLoading(false);
     }
@@ -103,25 +104,25 @@ const Hosts = () => {
       {/* Hosts Grid */}
       <div className="flex flex-col gap-y-12">
       {hostGroups.map((hostGroup) => (
-        <div className="flex flex-col">
+        <div key={hostGroup._id} className="flex flex-col pb-4 border-b-2 border-gray-600 border-dashed">
           <div className="mt-2 mb-4">
-            <h2 className="text-2xl font-semibold">{hostGroup.name} ({hostGroup.devices.length})</h2>
+            <h2 className="text-lg font-semibold">{hostGroup.name} ({hostGroup.devices.length})</h2>
           </div>
           {hostGroup.devices.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {hostGroup.devices.map((host) => (
-                <HostCard key={host.id} host={host} refetchHosts={getHosts} />
+                <HostCard key={host._id} host={host} refetchHosts={getHosts} groupNames={groupNames} />
               ))}
             </div>
           )}
         </div>
       ))}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {hosts.map((host) => (
           <HostCard key={host.id} host={host} refetchHosts={getHosts} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

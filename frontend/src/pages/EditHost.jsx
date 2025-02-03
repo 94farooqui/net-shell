@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SquareX } from 'lucide-react'
 import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -10,15 +10,18 @@ const defaultHost = {
     name: "",
     ipAddress: "",
     type: "",
+    group:"",
     description: "",
 }
 
+const token = localStorage.getItem("net_shell_token")
 
 const EditHost = () => {
     
     const location = useLocation()
     const host = location.state.host
-    console.log(host)
+    const groupNames = location.state.groupNames
+    console.log(host , groupNames)
     const [newHost, setNewHost] = useState(location.state.host)
     const navigate = useNavigate()
 
@@ -26,11 +29,19 @@ const EditHost = () => {
 const handleUpdateHostSubmit = async (e) => {
     e.preventDefault()
     console.log(newHost)
-    const response = await axios.put(`http://localhost:5000/api/hosts/${newHost._id}`, newHost)
+    const response = await axios.put(`http://localhost:5000/api/hosts/${newHost._id}`, newHost,{
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    })
     if(response.status == 200){
         navigate("/hosts")
     }
 }
+
+useEffect(()=>{
+
+},[])
 
 
     return (
@@ -49,6 +60,12 @@ const handleUpdateHostSubmit = async (e) => {
                     <label>Type</label>
                     <select value={newHost.type} className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, type: e.target.value })}>
                         {hostTypes.map(type => <option key={type} value={type}>{type}</option>)}
+                    </select>
+                </div>
+                <div  className='flex-1 flex flex-col gap-y-2'>
+                    <label>Group</label>
+                    <select value={newHost.group} className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, group: e.target.value })}>
+                        {groupNames.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
                     </select>
                 </div>
                 <div  className='flex-1 flex flex-col gap-y-2'>
