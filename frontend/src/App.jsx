@@ -18,6 +18,7 @@ import NewGroup from "./pages/NewGroup";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import EditGroup from "./pages/EditGroup";
+import NewCredntials from "./pages/NewCredntials";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -36,6 +37,7 @@ function App() {
           <Route path="groups/new" element={<NewGroup />} />
           <Route path="groups/edit/:groupId" element={<EditGroup />} />
           <Route path="groups" element={<Groups />} />
+          <Route path="credentials-manager/new" element={<NewCredntials />} />
           <Route path="credentials-manager" element={<CredentialsManager />} />
           <Route path="history" element={<History />} />
           <Route path="saved-commands" element={<SavedCommands />} />

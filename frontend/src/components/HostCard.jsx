@@ -49,7 +49,7 @@ const HostCard = ({ host, refetchHosts,groupNames }) => {
                 </ul></div>}
             <div className="flex items-center gap-3">
                 {typeIcons[type] || typeIcons.other}
-                <h3 className="text-lg font-semibold">{name}</h3>
+                <h3 className="text-base font-semibold">{name}</h3>
             </div>
             <p className="text-gray-400 text-sm mt-1">{ipAddress}</p>
             <p className="text-gray-300 text-sm mt-1">Connection: {connectionMethod}</p>

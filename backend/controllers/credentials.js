@@ -23,11 +23,13 @@ const getOneCred = async (req, res) => {
 
 // Add a new credential
 const addCred = async (req, res) => {
+  console.log("Rquest for add Cred")
   try {
     const newCred = new Credential(req.body);
     const savedCred = await newCred.save();
     res.status(201).json(savedCred);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -30,6 +30,10 @@ const UserSchema = new mongoose.Schema({
   groups: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'HostGroup'
+  }],
+  credentials: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Credential'
   }]
 }, { 
   timestamps: true,

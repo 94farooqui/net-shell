@@ -1,26 +1,44 @@
 const mongoose = require('mongoose');
 
 const CredentialSchema = new mongoose.Schema({
+    type:{
+        type:String,
+        required: true
+    },
     name:{
         type:String,
         required: true
     },
+    website:{
+        type:String,
+        
+    },
     username: {
         type: String,
-        required: true
+        
     },
     password: {
         type: String,
-        required: true
+        
     },
-    host: {
+    key: {
         type: String,
-        required: true
+        
     },
     notes: {
         type: String
     }
 
 })
+
+// {
+//     type: "SSH",
+//     name: "",
+//     website: "",
+//     username: "",
+//     password: "",
+//     key: "",
+//     notes: ""
+//   }
 
 module.exports = mongoose.model("Credential", CredentialSchema)

@@ -51,7 +51,7 @@ const Groups = () => {
       {/* Groups Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {groups.map((group) => (
-          <Link to={`edit/${group._id}`} key={group._id}>
+          <Link to={group.name == "Default" ? "" : `edit/${group._id}`} key={group._id}>
           <GroupCard  group={group} />
           </Link>
         ))}

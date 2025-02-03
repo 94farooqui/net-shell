@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import HostCard from "../components/HostCard";
 import NewHost from "./NewHost";
 import { useNavigate } from "react-router-dom";
+import HostGroupCard from "../components/HostGroupCard";
 
 // Sample data (Replace with API call in real implementation)
 // const hosts2 = [
@@ -75,7 +76,7 @@ const Hosts = () => {
     <div className="p-6">
       {/* Navbar */}
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center pb-4">
         <h1 className="text-2xl font-semibold">Hosts</h1>
         <button
           onClick={() => navigate("new")}
@@ -102,20 +103,9 @@ const Hosts = () => {
       </div>
 
       {/* Hosts Grid */}
-      <div className="flex flex-col gap-y-12">
+      <div className="flex flex-col">
       {hostGroups.map((hostGroup) => (
-        <div key={hostGroup._id} className="flex flex-col pb-4 border-b-2 border-gray-600 border-dashed">
-          <div className="mt-2 mb-4">
-            <h2 className="text-lg font-semibold">{hostGroup.name} ({hostGroup.devices.length})</h2>
-          </div>
-          {hostGroup.devices.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {hostGroup.devices.map((host) => (
-                <HostCard key={host._id} host={host} refetchHosts={getHosts} groupNames={groupNames} />
-              ))}
-            </div>
-          )}
-        </div>
+        <HostGroupCard key={hostGroup._id} hostGroup={hostGroup} groupNames={groupNames} refetchHosts={getHosts} />
       ))}
       </div>
       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
