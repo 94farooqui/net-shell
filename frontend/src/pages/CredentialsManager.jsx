@@ -5,12 +5,25 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 // Sample data (Replace with API call in real implementation)
-const credentials2 = [
-  { id: 1, cred_name: "AWS Server", username: "admin", ip_url: "192.168.1.1", comment: "Main production server" },
-  { id: 2, cred_name: "Cisco Router", username: "cisco", ip_url: "10.0.0.1", comment: "Core router" },
-  { id: 3, cred_name: "Firewall", username: "security", ip_url: "10.10.10.1", comment: "Perimeter firewall" },
-  { id: 4, cred_name: "Dev Server", username: "developer", ip_url: "dev.example.com", comment: "Development environment" },
-];
+// const credentials2 = [
+//   { id: 1, cred_name: "AWS Server", username: "admin", ip_url: "192.168.1.1", comment: "Main production server" },
+//   { id: 2, cred_name: "Cisco Router", username: "cisco", ip_url: "10.0.0.1", comment: "Core router" },
+//   { id: 3, cred_name: "Firewall", username: "security", ip_url: "10.10.10.1", comment: "Perimeter firewall" },
+//   { id: 4, cred_name: "Dev Server", username: "developer", ip_url: "dev.example.com", comment: "Development environment" },
+// ];
+
+const credsByType = [
+  {
+    type:"SSH",
+    creds:[]
+  },{
+    type:"Secret Key",
+    creds:[]
+  },{
+    type:"Website Credentials",
+    creds:[]
+  }
+]
 
 const token = localStorage.getItem("net_shell_token")
 
@@ -30,7 +43,15 @@ const CredentialsManager = () => {
       })
       if (response.status == 200) {
         console.log("received credentials", response.data)
-        setCredentials(response.data)
+        credsByType.forEach(credType => {
+          response.data.forEach(cred => {
+            if(credType.type == cred.type){
+              credType.creds.push(cred)
+            }
+          })
+        });
+        setCredentials(credsByType)
+        //setCredentials(response.data)
         setError("")
       }
     }
@@ -57,11 +78,21 @@ const CredentialsManager = () => {
       </div>
 
       {/* Credentials Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {credentials.map((cred) => (
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"> */}
+        {/* {credentials.map((cred) => (
+          <CredentialCard key={cred._id} credential={cred} />
+        ))} */}
+        <div className="flex flex-col gap-y-6">
+          {credentials.map((credential) => <div>
+            <h2 className="text-lg font-semibold mb-2">{credential.type}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {credential.creds.map((cred) => (
           <CredentialCard key={cred._id} credential={cred} />
         ))}
-      </div>
+            </div>
+          </div>)}
+        </div>
+      {/* </div> */}
     </div>
   );
 };
