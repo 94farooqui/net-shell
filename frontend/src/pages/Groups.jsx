@@ -16,6 +16,8 @@ const token = localStorage.getItem("net_shell_token")
 const Groups = () => {
   const navigate = useNavigate()
   const [groups,setGroups] = useState([])
+  const [searchFilter,setSearchFilter] = useState("")
+  const [filteredGroups,setFilteredGroups] = useState([])
   const [loading,setLoading] = useState(true)
 
   const getGroups = async () => {
@@ -25,13 +27,31 @@ const Groups = () => {
       }
   })
     if(response.status == 200){
+      //console.log(response.data)
       setGroups(response.data)
+      if(!searchFilter){
+        setFilteredGroups(response.data)
+      }
       setLoading(false)
     }
   }
 
+  const handleSearchInputChange = (e) => {
+   const filter = e.target.value
+    //console.log("Filter", filter)
+    setSearchFilter(filter)
+  }
+
+  useEffect(()=>{
+    const filter = searchFilter.toLowerCase()
+    const filtered = groups.filter(group => group.name.toLowerCase().includes(filter))
+    setFilteredGroups(filtered)
+    //console.log(filtered)
+  },[searchFilter])
+
   useEffect(()=>{
     getGroups()
+
   },[])
 
 
@@ -47,10 +67,22 @@ const Groups = () => {
           <Plus size={16} /> New Group
         </button>
       </div>
+      <div className="mb-6">
+        <form
+          className="w-full flex gap-x-4"
+        >
+          <input
+          value={searchFilter}
+            onChange={handleSearchInputChange}
+            className="flex-1 p-2 rounded-md border bg-gray-800  border-gray-700 focus:outline-none focus:border-gray-500"
+            placeholder="Search group"
+          />
+        </form>
+      </div>
 
       {/* Groups Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {groups.map((group) => (
+        {filteredGroups.map((group) => (
           <Link to={group.name == "Default" ? "" : `edit/${group._id}`} key={group._id}>
           <GroupCard  group={group} />
           </Link>
