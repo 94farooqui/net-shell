@@ -6,6 +6,9 @@ const User = require('../models/User');
 const { newUserDefaultActions } = require('../lib/newUserDefaults');
 const router = express.Router();
 
+const {verifyuser} = require("./../middleware/verifyUser.js");
+const { getUserDetails } = require('../controllers/auth.js');
+
 // Register a new user
 router.post('/signup', async (req, res) => {
   const { name, password, email } = req.body;
@@ -40,5 +43,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Login failed' });
   }
 });
+
+router.get("/", verifyuser , getUserDetails)
 
 module.exports = router;

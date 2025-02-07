@@ -16,27 +16,27 @@ const TerminalShell = ({sshConfig}) => {
     const webLinksAddon = useRef(null);
 
     useEffect(() => {
-        terminal.current = new Terminal();
-        fitAddon.current = new FitAddon();
-        searchAddon.current = new SearchAddon();
-        webLinksAddon.current = new WebLinksAddon();
+      //   terminal.current = new Terminal();
+      //   fitAddon.current = new FitAddon();
+      //   searchAddon.current = new SearchAddon();
+      //   webLinksAddon.current = new WebLinksAddon();
     
-        terminal.current.loadAddon(fitAddon.current);
-        terminal.current.loadAddon(searchAddon.current);
-        terminal.current.loadAddon(webLinksAddon.current);
+      //   terminal.current.loadAddon(fitAddon.current);
+      //   terminal.current.loadAddon(searchAddon.current);
+      //   terminal.current.loadAddon(webLinksAddon.current);
     
-        terminal.current.open(terminalRef.current);
+      //   terminal.current.open(terminalRef.current);
     
-        // Fit the terminal to the container
-        fitAddon.current.fit();
+      //   // Fit the terminal to the container
+      //   fitAddon.current.fit();
     
-        // Example: Write some text to the terminal
-        terminal.current.write('Hello from xterm.js!\r\n');
+      //   // Example: Write some text to the terminal
+      //   terminal.current.write('Hello from xterm.js!\r\n');
 
 
 
-        console.log("Conneting to switch",sshConfig)
-       terminal.current.writeln("Welcome to NetShell")
+      //   console.log("Conneting to switch",sshConfig)
+      //  terminal.current.writeln("Welcome to NetShell")
     
        socket.emit('connectToSSH', sshConfig);
     
@@ -46,21 +46,21 @@ const TerminalShell = ({sshConfig}) => {
        });
 
         // Send user input to SSH server
-       terminal.current.onData((data) => {
-          socket.emit('sshCommand', data);
-        });
+      //  terminal.current.onData((data) => {
+      //     socket.emit('sshCommand', data);
+      //   });
 
-        window.addEventListener('resize', () => {
-            fitAddon.current.fit();
-          });
+        // window.addEventListener('resize', () => {
+        //     fitAddon.current.fit();
+        //   });
     
         // Cleanup
         return () => {
-         terminal.current.dispose();
+         //terminal.current.dispose();
           socket.disconnect();
-          window.removeEventListener('resize', () => {
-            fitAddon.current.fit(); // Remove the listener
-        });
+        //   window.removeEventListener('resize', () => {
+        //     fitAddon.current.fit(); // Remove the listener
+        // });
         };
       }, []);
 

@@ -26,9 +26,11 @@ const savedCredentials = [
 const TerminalPage = () => {
 
   const [error,setError] = useState("")
+
   const termRef = useRef(null);
   const terminalInstance = useRef(null);
   const fitAddon = useRef(new FitAddon());
+  
   const [sshConfig, setSSHConfig] = useState(defaultSSHConfig)
 
   const [useSavedCreds, setUseSavedCreds] = useState(false);
