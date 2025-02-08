@@ -4,7 +4,7 @@ const Note = require("../models/Note");
 // Get all notes
 const getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.user.id });
+    const notes = await Note.find({ user: req.user.userId });
     res.status(200).json(notes);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -24,11 +24,13 @@ const getOneNote = async (req, res) => {
 
 // Add a new note
 const addOneNote = async (req, res) => {
+  console.log("req.user",req.user)
   try {
-    const newNote = new Note({ ...req.body, user: req.user.id });
+    const newNote = new Note({ ...req.body, user: req.user.userId });
     const savedNote = await newNote.save();
     res.status(201).json(savedNote);
   } catch (error) {
+    console.log("Add note error", error)
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -38,7 +40,7 @@ const updateOneNote = async (req, res) => {
   try {
     const updatedNote = await Note.findByIdAndUpdate(req.params.NoteId, req.body, { new: true });
     if (!updatedNote) return res.status(404).json({ message: "Note not found" });
-    res.status(200).json(updatedNote);
+    return res.status(200).json(updatedNote);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

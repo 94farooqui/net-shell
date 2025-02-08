@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
 
     const getUser = async (token) => {
         try{
-            console.log("Fetchin details for", token)
+            //console.log("Fetchin details for", token)
             const response = await axios.get("http://localhost:5000/api/auth", {
                 headers:{
                     Authorization:`Bearer ${token}`
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("net_shell_token");
 
     if (token) {
-        console.log("Verifying token", token)
+        //console.log("Verifying token", token)
         getUser(token)
       //setUser({ username: "User" }); // Ideally, fetch user details from API
     }

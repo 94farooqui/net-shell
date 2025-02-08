@@ -83,6 +83,7 @@ const Hosts = () => {
         </button>
       </div>
 
+      {/* Search bar */}
       <div className="mb-6">
         <form
           className="w-full flex gap-x-4"
