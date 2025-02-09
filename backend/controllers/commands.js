@@ -3,7 +3,7 @@ const Command = require("../models/Command");
 // Get all commands
 const getCommands = async (req, res) => {
   try {
-    const commands = await Command.find({ owner: req.user.id });
+    const commands = await Command.find({ owner: req.user.userId });
     res.status(200).json(commands);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -23,8 +23,9 @@ const getOneCommand = async (req, res) => {
 
 // Add a new command
 const addCommand = async (req, res) => {
+  console.log(req.body, req.user)
   try {
-    const newCommand = new Command({ ...req.body, owner: req.user.id });
+    const newCommand = new Command({ ...req.body, owner: req.user.userId });
     const savedCommand = await newCommand.save();
     res.status(201).json(savedCommand);
   } catch (error) {

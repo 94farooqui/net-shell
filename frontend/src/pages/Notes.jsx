@@ -132,7 +132,7 @@ const NotesPage = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Notes</h2>
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => setNewNoteModal(true)}
           className="bg-blue-500 px-4 py-2 text-white rounded-md"
         >
           Add Note
@@ -153,7 +153,7 @@ const NotesPage = () => {
 
       {/* Notes List */}
       {filteredNotes.length > 0 ?
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {filteredNotes.map((note) => (
             <NotesCard key={note._id} note={note} setRefetch={setRefetch} setShowEditForm={setShowEditForm} setEditableNote={setEditableNote} />
 
@@ -162,7 +162,7 @@ const NotesPage = () => {
 
       {/* Add Note Modal */}
       {newNoteModal && (
-        <NoteForm note={newNote} setNote={setNewNote} setShow={setModalOpen} setRefetch={setRefetch} action={handleAddNote} />
+        <NoteForm note={newNote} setNote={setNewNote} setShow={setNewNoteModal} setRefetch={setRefetch} action={handleAddNote} />
       )}
       {showEditForm && (
         <NoteForm note={editableNote} setNote={setEditableNote} setShow={setShowEditForm} setRefetch={setRefetch} action={handleUpdateNote} />

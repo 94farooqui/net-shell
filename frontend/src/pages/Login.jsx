@@ -1,9 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
 
 const LoginPage = () => {
+  const {login, setAuthLoading} = useAuth()
     const navigate = useNavigate()
+    const [loading,setLoading]=useState(false)
+    const [error,setError] = useState("")
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,14 +20,28 @@ const LoginPage = () => {
 
   // Handle Form Submission
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
+    setLoading(true)
     console.log("Login Data:", formData); 
-    const response = await axios.post("http://localhost:5000/api/auth/login", formData)
-    if(response.status == 201) {
-        console.log(response.data.token)
-        localStorage.setItem("net_shell_token",response.data.token)
-        navigate("/")
+    try{
+      const response = await axios.post("http://localhost:5000/api/auth/login", formData)
+      if(response.status == 201) {
+          //console.log(response.data.token)
+          localStorage.setItem("net_shell_token",response.data.token)
+          login(response.data.token)
+          setAuthLoading(true)
+          navigate("/")
+      }
     }
+    catch(error){
+      //console.log(error)
+      setError(error.response.data.message)
+    }
+    finally{
+      setLoading(false)
+    }
+    
   };
 
   return (
@@ -56,9 +74,10 @@ const LoginPage = () => {
             type="submit"
             className="w-full bg-blue-500 py-2 rounded-md text-white font-semibold"
           >
-            Log In
+            {loading ? "Loading..." :"Log In"}
           </button>
         </form>
+        {error && <p className="mt-4 text-red-500">{error}</p>}
 
         <p className="text-center mt-4 text-sm">
           Don't have an account?{" "}

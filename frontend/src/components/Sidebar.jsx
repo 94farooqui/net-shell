@@ -12,7 +12,7 @@ const Sidebar = () => {
     { name: "Groups", path: "/groups", icon: <Users size={20} /> },
     { name: "Credentials Manager", path: "/credentials-manager", icon: <Key size={20} /> },
     { name: "History", path: "/history", icon: <History size={20} /> },
-    { name: "Saved Commands", path: "/saved-commands", icon: <Save size={20} /> },
+    { name: "Saved Commands", path: "/commands", icon: <Save size={20} /> },
     { name: "Notes", path: "/notes", icon: <Notebook size={20} /> },
   ];
 

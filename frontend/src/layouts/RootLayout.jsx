@@ -10,7 +10,7 @@ const RootLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="relative flex-1 bg-[#202024] text-white overflow-auto">
+      <div className="relative flex-1 bg-[#202024] text-white overflow-auto overscroll-none scroll-smooth">
         <NavbarProvider>
           <Navbar/>
           <div  className="px-6 pt-12">

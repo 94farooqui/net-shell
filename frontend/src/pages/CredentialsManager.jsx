@@ -14,84 +14,125 @@ import axios from "axios";
 
 const credsByType = [
   {
-    type:"SSH",
-    creds:[]
-  },{
-    type:"Secret Key",
-    creds:[]
-  },{
-    type:"Website Credentials",
-    creds:[]
-  }
-]
+    type: "SSH",
+    creds: [],
+  },
+  {
+    type: "Secret Key",
+    creds: [],
+  },
+  {
+    type: "Website Credentials",
+    creds: [],
+  },
+];
 
-const token = localStorage.getItem("net_shell_token")
+const token = localStorage.getItem("net_shell_token");
 
 const CredentialsManager = () => {
-  const [credentials, setCredentials] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const navigate = useNavigate()
+  const [credentials, setCredentials] = useState([]);
+  const [filteredCredentials,setFilteredCredentials] = useState([])
+  const [searchFilter,setSearchFilter] = useState("")
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const getCredentials = async () => {
     try {
-      console.log("Fetching...")
-      const response = await axios.get("http://localhost:5000/api/credentials", {
-        headers: {
-          Authorization: `Bearer ${token}`
+      console.log("Fetching...");
+      const response = await axios.get(
+        "http://localhost:5000/api/credentials",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
+      );
       if (response.status == 200) {
-        console.log("received credentials", response.data)
-        credsByType.forEach(credType => {
-          response.data.forEach(cred => {
-            if(credType.type == cred.type){
-              credType.creds.push(cred)
+        console.log("received credentials", response.data);
+        credsByType.forEach((credType) => {
+          response.data.forEach((cred) => {
+            if (credType.type == cred.type) {
+              credType.creds.push(cred);
             }
-          })
+          });
         });
-        setCredentials(credsByType)
+        setCredentials(credsByType);
+        setFilteredCredentials(credsByType)
         //setCredentials(response.data)
-        setError("")
+        setError("");
       }
+    } catch (error) {
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    catch (error) {
-      setError("Something went wrong")
+  };
+
+  const handleSearchInputChange = (e) => {
+    const searchValue = e.target.value.toLocaleLowerCase()
+    console.log(searchValue)
+    setSearchFilter(searchValue)
+
+    if (!searchValue) {
+      setFilteredHostGroups(hostGroups)
     }
-    finally {
-      setLoading(false)
+  };
+
+  useEffect(()=>{
+    if(!searchFilter){
+      setFilteredCredentials(credentials)
     }
-  }
+
+    const filtered = credentials.map(credential => credential.creds.filter(cred=> cred.name.toLowerCase().includes(searchFilter)))
+    setFilteredCredentials(filtered)
+    console.log("Filtered", filtered)
+  },[searchFilter])
 
   useEffect(() => {
-    getCredentials()
-  }, [])
+    getCredentials();
+  }, []);
 
   return (
     <div className="p-6">
       {/* Navbar */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Credentials Manager</h1>
-        <button onClick={() => navigate("new")} className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition">
+        <button
+          onClick={() => navigate("new")}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition"
+        >
           <Plus size={16} /> New Credential
         </button>
+      </div>
+      {/* Search bar */}
+      <div className="mb-6">
+        <form className="w-full flex gap-x-4">
+          <input
+            onChange={handleSearchInputChange}
+            className="flex-1 p-2 rounded-md border bg-gray-800  border-gray-700 focus:outline-none focus:border-gray-500"
+            placeholder="Enter IP or Host name"
+          />
+        </form>
       </div>
 
       {/* Credentials Grid */}
       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"> */}
-        {/* {credentials.map((cred) => (
+      {/* {credentials.map((cred) => (
           <CredentialCard key={cred._id} credential={cred} />
         ))} */}
-        <div className="flex flex-col gap-y-6">
-          {credentials.map((credential) => <div>
+      <div className="flex flex-col gap-y-6">
+        {filteredCredentials.map((credential,index) => (
+          <div key={index}>
             <h2 className="text-lg font-semibold mb-2">{credential.type}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {credential.creds.map((cred) => (
-          <CredentialCard key={cred._id} credential={cred} />
-        ))}
+              {credential.creds.map((cred) => (
+                <CredentialCard key={cred._id} credential={cred} />
+              ))}
             </div>
-          </div>)}
-        </div>
+          </div>
+        ))}
+      </div>
       {/* </div> */}
     </div>
   );

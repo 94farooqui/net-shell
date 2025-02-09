@@ -8,32 +8,31 @@ export const AuthProvider = ({ children }) => {
   const [authLoading, setAuthLoading] = useState(true);
   const [authError,setAuthError] = useState("")
   
+  const getUser = async (token) => {
+    try{
+        //console.log("Fetchin details for", token)
+        const response = await axios.get("http://localhost:5000/api/auth", {
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        })
+        if(response.status == 200){
+            setUser(response.data.user)
+        }
+    }
+    catch(error){
+        console.log("Error",error)
+        setAuthError("Invalid Token")
+        localStorage.removeItem("net_shell_token")
+    }
+    finally{
+        setAuthLoading(false)
+    }
+    
+}
 
   useEffect(() => {
     
-
-    const getUser = async (token) => {
-        try{
-            //console.log("Fetchin details for", token)
-            const response = await axios.get("http://localhost:5000/api/auth", {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-            })
-            if(response.status == 200){
-                setUser(response.data.user)
-            }
-        }
-        catch(error){
-            console.log("Error",error)
-            setAuthError("Invalid Token")
-            localStorage.removeItem("net_shell_token")
-        }
-        finally{
-            setAuthLoading(false)
-        }
-        
-    }
     // Simulate token check (Replace with actual API call)
     const token = localStorage.getItem("net_shell_token");
 
@@ -45,8 +44,17 @@ export const AuthProvider = ({ children }) => {
     else setAuthLoading(false)
   }, []);
 
+  const login = (token) => {
+    getUser(token)
+  }
+
+  const logout = () => {
+    localStorage.removeItem("net_shell_token")
+    setUser(null)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, setUser, authLoading, authError }}>
+    <AuthContext.Provider value={{ user, setUser,login, logout, authLoading, setAuthLoading,authError }}>
       {children}
     </AuthContext.Provider>
   );

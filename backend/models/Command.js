@@ -10,10 +10,6 @@ const CommandSchema = new mongoose.Schema({
     required: true 
   },
   description: String,
-  deviceType: {
-    type: String,
-    enum: ['router', 'switch', 'firewall', 'server', 'all']
-  },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
