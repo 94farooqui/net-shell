@@ -58,6 +58,7 @@ const CredentialsManager = () => {
           });
         });
         setCredentials(credsByType);
+        console.log(credsByType)
         setFilteredCredentials(credsByType)
         //setCredentials(response.data)
         setError("");
@@ -84,7 +85,7 @@ const CredentialsManager = () => {
       setFilteredCredentials(credentials)
     }
 
-    const filtered = credentials.map(credential => credential.creds.filter(cred=> cred.name.toLowerCase().includes(searchFilter)))
+    const filtered = credentials.map(credential => ({type: credential.type, creds: credential.creds.filter(cred=> cred.name.toLowerCase().includes(searchFilter))})).filter(item => item.creds.length > 0)
     setFilteredCredentials(filtered)
     console.log("Filtered", filtered)
   },[searchFilter])
