@@ -49,7 +49,7 @@ const deleteOneCommand = async (req, res) => {
   try {
     const deletedCommand = await Command.findByIdAndDelete(req.params.commandId);
     if (!deletedCommand) return res.status(404).json({ message: "Command not found" });
-    res.status(200).json({ message: "Command deleted successfully" });
+    return res.status(200).json({ message: "Command deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

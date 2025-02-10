@@ -19,6 +19,7 @@ const SavedCommands = () => {
   const [commands,setCommands] = useState([])
   const [loading,setLoading] = useState(true)
   const [error,setError] =useState("")
+  const [refetch,setRefetch] = useState(0)
 
   useEffect(()=>{
     const getCommands = async () => {
@@ -41,7 +42,7 @@ const SavedCommands = () => {
       }
     }
     getCommands()
-  },[])
+  },[refetch])
 
   if(loading){
     return <p>Loading...</p>
@@ -64,7 +65,7 @@ const SavedCommands = () => {
       {/* Commands Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {commands.map((cmd) => (
-          <CommandCard key={cmd._id} command={cmd} />
+          <CommandCard key={cmd._id} command={cmd} setRefetch={setRefetch} />
         ))}
       </div>
     </div>

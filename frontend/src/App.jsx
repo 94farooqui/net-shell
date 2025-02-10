@@ -22,6 +22,7 @@ import NewCredntials from "./pages/NewCredntials";
 import { AuthProvider } from "./context/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
 import NewCommand from "./pages/NewCommand";
+import EditCommand from "./pages/EditCommand";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -47,6 +48,7 @@ function App() {
         <Route path="credentials-manager" element={<CredentialsManager />} />
         <Route path="history" element={<History />} />
         <Route path="commands/new" element={<NewCommand />} />
+        <Route path="commands/:commandId/edit" element={<EditCommand />} />
         <Route path="commands" element={<SavedCommands />} />
         <Route path="notes" element={<Notes />} />
       </Route>
