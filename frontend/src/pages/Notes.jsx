@@ -138,6 +138,8 @@ const NotesPage = () => {
           Add Note
         </button>
       </div>
+
+      {/* Searchbar */}
       <div className="mb-6">
         <form
           className="w-full flex gap-x-4"

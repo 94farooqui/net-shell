@@ -55,11 +55,13 @@ io.on('connection', (socket) => {
 
         sshClient.shell((err, stream) => {
           if (err) {
+            console.log("SSH Error",err)
             return socket.emit('sshData', `Error: ${err.message}`);
           }
 
           // Send data from SSH server to client
           stream.on('data', (data) => {
+            console.log('sshData', data.toString());
             socket.emit('sshData', data.toString());
           });
 

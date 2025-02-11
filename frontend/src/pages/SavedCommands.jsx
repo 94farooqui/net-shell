@@ -16,39 +16,51 @@ const token = localStorage.getItem("net_shell_token")
 
 const SavedCommands = () => {
   const navigate = useNavigate()
-  const [commands,setCommands] = useState([])
-  const [loading,setLoading] = useState(true)
-  const [error,setError] =useState("")
-  const [refetch,setRefetch] = useState(0)
+  const [commands, setCommands] = useState([])
+  const [searchFilter, setSearchFilter] = useState("")
+  const [filteredCommands, setFilteredCommands] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [refetch, setRefetch] = useState(0)
 
-  useEffect(()=>{
+  const handleSearchInputChange = (e) => {
+    setSearchFilter(e.target.value.toLowerCase())
+  }
+
+  useEffect(() => {
+    const filtered = commands.filter((command) => (command.name.toLowerCase().includes(searchFilter) || command.command.toLowerCase().includes(searchFilter) || command.description.toLowerCase().includes(searchFilter)))
+    setFilteredCommands(filtered)
+  }, [searchFilter])
+
+  useEffect(() => {
     const getCommands = async () => {
-      try{
+      try {
         const response = await axios.get("http://localhost:5000/api/commands", {
-          headers:{
-            Authorization:`Bearer ${token}`
+          headers: {
+            Authorization: `Bearer ${token}`
           }
         })
 
-        if(response.status == 200){
+        if (response.status == 200) {
           setCommands(response.data)
+          setFilteredCommands(response.data)
         }
       }
-      catch(error){
+      catch (error) {
         setError("Error in fetching")
       }
-      finally{
+      finally {
         setLoading(false)
       }
     }
     getCommands()
-  },[refetch])
+  }, [refetch])
 
-  if(loading){
+  if (loading) {
     return <p>Loading...</p>
   }
 
-  if(error){
+  if (error) {
     return <p>{error}</p>
   }
 
@@ -57,14 +69,27 @@ const SavedCommands = () => {
       {/* Navbar */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Saved Commands</h1>
-        <button onClick={()=>navigate("new")} className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition">
+        <button onClick={() => navigate("new")} className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition">
           <Plus size={16} /> New Command
         </button>
       </div>
 
+      {/* Searchbar */}
+      <div className="mb-6">
+        <form
+          className="w-full flex gap-x-4"
+        >
+          <input
+            onChange={handleSearchInputChange}
+            className="flex-1 p-2 rounded-md border bg-gray-800  border-gray-700 focus:outline-none focus:border-gray-500"
+            placeholder="Search Notes"
+          />
+        </form>
+      </div>
+
       {/* Commands Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {commands.map((cmd) => (
+        {filteredCommands.map((cmd) => (
           <CommandCard key={cmd._id} command={cmd} setRefetch={setRefetch} />
         ))}
       </div>

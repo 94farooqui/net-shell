@@ -23,6 +23,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
 import NewCommand from "./pages/NewCommand";
 import EditCommand from "./pages/EditCommand";
+import Sessions from "./pages/Sessions";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -50,6 +51,7 @@ function App() {
         <Route path="commands/new" element={<NewCommand />} />
         <Route path="commands/:commandId/edit" element={<EditCommand />} />
         <Route path="commands" element={<SavedCommands />} />
+        <Route path="sessions" element={<Sessions />} />
         <Route path="notes" element={<Notes />} />
       </Route>
     </Route>
