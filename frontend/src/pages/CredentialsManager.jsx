@@ -51,16 +51,16 @@ const CredentialsManager = () => {
       );
       if (response.status == 200) {
         console.log("received credentials", response.data);
-        credsByType.forEach((credType) => {
-          response.data.forEach((cred) => {
-            if (credType.type == cred.type) {
-              credType.creds.push(cred);
-            }
-          });
-        });
-        setCredentials(credsByType);
-        console.log(credsByType)
-        setFilteredCredentials(credsByType)
+        // credsByType.forEach((credType) => {
+        //   response.data.forEach((cred) => {
+        //     if (credType.type == cred.type) {
+        //       credType.creds.push(cred);
+        //     }
+        //   });
+        // });
+        setCredentials(response.data);
+        //console.log(credsByType)
+        setFilteredCredentials(response.data.filter(type => type.creds.length >0))
         //setCredentials(response.data)
         setError("");
       }

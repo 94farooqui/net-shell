@@ -20,7 +20,7 @@ const Navbar = () => {
       
         <p>{user.name}</p>
         <span onClick={()=>setShowLogout(true)}><CircleUser /></span>
-        {showLogout && <button onClick={handleLogout} className='absolute top-10 right-2 bg-gray-700 p-2 px-4 rounded-lg'><LogOut className="mr-2 inline-block"/> Logout</button>}
+        {showLogout && <button onClick={handleLogout} className=' bg-gray-700 p-2 px-4 rounded-lg'><LogOut className="mr-2 inline-block"/> Logout</button>}
       </div>
       </div>
   )

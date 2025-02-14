@@ -3,9 +3,26 @@ const Credential = require("../models/Credential");
 // Get all credentials
 const getCreds = async (req, res) => {
   try {
-    const creds = await Credential.find();
-    res.status(200).json(creds);
+    const creds = await Credential.find({owner:req.user.userId});
+
+    //get Cred Types
+    let types = []
+    creds.forEach(cred => types.includes(cred.type) ? "" : types.push(cred.type)  ) 
+    console.log("Cred Types", types)
+
+    const credsByType = types.map(type => ({type: type, creds:[]}))
+    credsByType.forEach((credType) => {
+      creds.forEach((cred) => {
+        if (credType.type == cred.type) {
+          credType.creds.push(cred);
+        }
+      });
+    });
+
+
+    res.status(200).json(credsByType);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -25,7 +42,7 @@ const getOneCred = async (req, res) => {
 const addCred = async (req, res) => {
   console.log("Rquest for add Cred")
   try {
-    const newCred = new Credential(req.body);
+    const newCred = new Credential({...req.body, owner: req.user.userId});
     const savedCred = await newCred.save();
     res.status(201).json(savedCred);
   } catch (error) {

@@ -70,6 +70,7 @@ const addOneHost = async (req, res) => {
 
   try{
     const newHost = await Host({...req.body, owner: req.user.userId})
+    await newHost.save
     if(!newHost){
       return res.status(500).json({error:"Something went wrong"})
     }

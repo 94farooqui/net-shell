@@ -1,33 +1,38 @@
 const mongoose = require('mongoose');
 
 const CredentialSchema = new mongoose.Schema({
-    type:{
-        type:String,
+    type: {
+        type: String,
         required: true
     },
-    name:{
-        type:String,
+    name: {
+        type: String,
         required: true
     },
-    website:{
-        type:String,
-        
+    website: {
+        type: String,
+
     },
     username: {
         type: String,
-        
+
     },
     password: {
         type: String,
-        
+
     },
     key: {
         type: String,
-        
+
     },
     notes: {
         type: String
-    }
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
 
 })
 
