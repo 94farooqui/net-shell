@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
 
           // Send data from SSH server to client
           stream.on('data', (data) => {
-            console.log('sshData', data.toString());
+            //console.log('sshData', data.toString());
             socket.emit('sshData', data.toString());
           });
 
@@ -81,7 +81,12 @@ io.on('connection', (socket) => {
         console.error('SSH error:', err);
         socket.emit('sshData', `Error: ${err.message}`);
       })
-      .connect(config);
+      .connect({
+          ...config, // Your existing SSH config (host, port, username, password)
+          algorithms: {
+            kex: ['diffie-hellman-group14-sha1'], // Add the required KEX algorithm
+          },
+        });
   });
 
   socket.on('disconnect', () => {

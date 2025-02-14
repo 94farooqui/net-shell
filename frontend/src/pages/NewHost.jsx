@@ -80,7 +80,8 @@ useEffect(()=>{
                 
                 <div  className='flex-1 flex flex-col gap-y-2'>
                     <label>Group</label>
-                    <select className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, group: e.target.value })}>
+                    <select value="Default" className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, group: e.target.value })}>
+                        <option>Select Group</option>
                         {hostGroups.map(group => <option key={group._id} value={group._id}>{group.name}</option>)}
                     </select>
                 </div>

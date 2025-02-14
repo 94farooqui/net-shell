@@ -24,6 +24,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import NewCommand from "./pages/NewCommand";
 import EditCommand from "./pages/EditCommand";
 import Sessions from "./pages/Sessions";
+import SessionsProvider from "./context/SessionsProvider";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -32,35 +33,37 @@ function App() {
     <>
       {" "}
       <AuthProvider>
-      <BrowserRouter>
-  <Routes>
-    {/* Protected Routes - Require Authentication */}
-    <Route element={<PrivateRoute />}>
-      <Route path="/" element={<RootLayout />}>
-        <Route index element={<Home />} />
-        <Route path="terminal" element={<Terminal />} />
-        <Route path="hosts/edit/:hostId" element={<EditHost />} />
-        <Route path="hosts/new" element={<NewHost />} />
-        <Route path="hosts" element={<Hosts />} />
-        <Route path="groups/new" element={<NewGroup />} />
-        <Route path="groups/edit/:groupId" element={<EditGroup />} />
-        <Route path="groups" element={<Groups />} />
-        <Route path="credentials-manager/new" element={<NewCredntials />} />
-        <Route path="credentials-manager" element={<CredentialsManager />} />
-        <Route path="history" element={<History />} />
-        <Route path="commands/new" element={<NewCommand />} />
-        <Route path="commands/:commandId/edit" element={<EditCommand />} />
-        <Route path="commands" element={<SavedCommands />} />
-        <Route path="sessions" element={<Sessions />} />
-        <Route path="notes" element={<Notes />} />
-      </Route>
-    </Route>
+        <SessionsProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Protected Routes - Require Authentication */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/" element={<RootLayout />}>
+                <Route index element={<Home />} />
+                <Route path="terminal" element={<Terminal />} />
+                <Route path="hosts/edit/:hostId" element={<EditHost />} />
+                <Route path="hosts/new" element={<NewHost />} />
+                <Route path="hosts" element={<Hosts />} />
+                <Route path="groups/new" element={<NewGroup />} />
+                <Route path="groups/edit/:groupId" element={<EditGroup />} />
+                <Route path="groups" element={<Groups />} />
+                <Route path="credentials-manager/new" element={<NewCredntials />} />
+                <Route path="credentials-manager" element={<CredentialsManager />} />
+                <Route path="history" element={<History />} />
+                <Route path="commands/new" element={<NewCommand />} />
+                <Route path="commands/:commandId/edit" element={<EditCommand />} />
+                <Route path="commands" element={<SavedCommands />} />
+                <Route path="sessions" element={<Sessions />} />
+                <Route path="notes" element={<Notes />} />
+              </Route>
+            </Route>
 
-    {/* Public Routes - No Authentication Required */}
-    <Route path="/signup" element={<Signup />} />
-    <Route path="/login" element={<Login />} />
-  </Routes>
-</BrowserRouter>
+            {/* Public Routes - No Authentication Required */}
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </BrowserRouter>
+        </SessionsProvider>
       </AuthProvider>
     </>
   );

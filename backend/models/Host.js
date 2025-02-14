@@ -16,19 +16,19 @@ const HostSchema = new mongoose.Schema({
     required: true 
   },
   credentials: {
-    username: { type: String },
-    password: { type: String, select: false }, // Exclude from default queries
-    sshKey: { type: String, select: false }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Credential',
+    default: null
   },
-  // owner: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'User',
-  //   // required: true
-  // },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'HostGroup',
-    default: 'none'
+    default: null
   },
   connectionMethod: {
     type: String,

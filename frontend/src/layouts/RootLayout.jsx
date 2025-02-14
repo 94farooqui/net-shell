@@ -13,7 +13,7 @@ const RootLayout = () => {
       <div className="relative flex-1 bg-[#202024] text-white overflow-auto overscroll-none scroll-smooth">
         <NavbarProvider>
           <Navbar/>
-          <div  className="px-6 pt-6">
+          <div  className="px-6 pt-6 relative">
           <Outlet /> {/* This will render the matched route's component */}
           </div>
        

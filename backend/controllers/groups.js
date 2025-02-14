@@ -4,7 +4,7 @@ const User = require("../models/User");
 // Get all host groups
 const getGroups = async (req, res) => {
   try {
-    const groups = await HostGroup.find().populate("devices owner");
+    const groups = await HostGroup.find({owner: req.user.userId}).populate("devices owner");
     res.status(200).json(groups);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -15,7 +15,7 @@ const getGroupNames = async (req, res) => {
   try {
     console.log("request for group names for user", req.user.userId)
     //const user = await User.findById(req.user.userId).populate({ path: 'groups', select: 'name' });
-    const groups = await HostGroup.find({owner:req.user.userId}).select("name")
+    const groups = await HostGroup.find({owner:req.user.userId})
     console.log("Groups",groups)
     return res.status(200).json(groups);
   } catch (error) {

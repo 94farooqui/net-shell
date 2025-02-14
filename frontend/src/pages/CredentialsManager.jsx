@@ -27,9 +27,10 @@ const credsByType = [
   },
 ];
 
-const token = localStorage.getItem("net_shell_token");
+
 
 const CredentialsManager = () => {
+  const token = localStorage.getItem("net_shell_token");
   const [credentials, setCredentials] = useState([]);
   const [filteredCredentials,setFilteredCredentials] = useState([])
   const [searchFilter,setSearchFilter] = useState("")

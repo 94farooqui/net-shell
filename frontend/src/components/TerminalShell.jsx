@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { SearchAddon } from 'xterm-addon-search';
@@ -7,12 +7,15 @@ import 'xterm/css/xterm.css'; // Import the CSS
 import { io } from 'socket.io-client';
 import { CircleX } from 'lucide-react';
 import { TerminalShellOptions } from '../config/TerminalShellOptions';
+import { SessionsContext } from '../context/SessionsProvider';
 
 
 
 const socket = io('http://localhost:5000');
+const sessionBuffers = {};
 
-const TerminalShell = ({sshConfig,setShowTerminal}) => {
+const TerminalShell = ({sshConfig,sessionId}) => {
+  const {activeSession} = useContext(SessionsContext)
     const terminalRef = useRef(null);
     const terminal = useRef(null); // Store the terminal instance
     const fitAddon = useRef(null);
@@ -36,13 +39,19 @@ const TerminalShell = ({sshConfig,setShowTerminal}) => {
     
       //   // Example: Write some text to the terminal
       //   terminal.current.write('Hello from xterm.js!\r\n');
+      if(sessionBuffers[activeSession.sessionId]){
+        terminal.current.write(sessionBuffers[activeSession.sessionId])
+      }
+      else {
+        sessionBuffers[activeSession.sessionId] = "";
+      }
 
 
 
       //   console.log("Conneting to switch",sshConfig)
       //  terminal.current.writeln("Welcome to NetShell")
     
-       socket.emit('connectToSSH', sshConfig);
+       socket.emit('connectToSSH', activeSession.sshConfig);
     
        // Handle data from SSH server
        socket.on('sshData', (data) => {
@@ -69,8 +78,7 @@ const TerminalShell = ({sshConfig,setShowTerminal}) => {
       }, []);
 
       return (
-        <div className='fixed top-0 left-0 w-screen h-screen overflow-y-auto p-12 bg-gray-500 flex justify-center items-center'>
-          <button onClick={()=>setShowTerminal(false)} className='fixed top-4 right-4'><CircleX className='text-white' /></button>
+        <div className='w-full'>
           <div ref={terminalRef} style={{ width: "100%", height: "100%" }}></div>
         </div>
       );

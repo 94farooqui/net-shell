@@ -5,9 +5,18 @@ const HostGroupSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
-  description: String,
-  location: String,
-  project: String,
+  description: {
+    type: String,
+    default: "Default"
+  },
+  location: {
+    type: String,
+    default: "Default location"
+  },
+  project: {
+    type: String,
+    default: "Default Project"
+  },
   devices: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Host'

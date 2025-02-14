@@ -46,7 +46,7 @@ const Hosts = () => {
       },
     });
     if (response.status == 200) {
-      //console.log(response.data);
+      console.log(response.data);
 
 
       setGroupNames(response.data.map(group => ({ id: group._id, name: group.name })))
@@ -98,7 +98,7 @@ const Hosts = () => {
 
       {/* Hosts Grid */}
       <div className="flex flex-col">
-        {filteredHostGroups.map((hostGroup) => (
+        {filteredHostGroups.filter(hostGroup => hostGroup.devices.length > 0).map((hostGroup) => (
           <HostGroupCard key={hostGroup._id} hostGroup={hostGroup} groupNames={groupNames} refetchHosts={getHosts} />
         ))}
       </div>

@@ -1,13 +1,17 @@
 // Host Card Component
 import axios from "axios";
 import { Plus, Server, Router, Shield, HardDrive, Globe, EllipsisVertical } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { SessionsContext } from "../context/SessionsProvider";
 
-const HostCard = ({ host, refetchHosts,groupNames }) => {
+const HostCard = ({ host, refetchHosts, groupNames }) => {  
+    const token = localStorage.getItem("net_shell_token");
+    const { addSession } = useContext(SessionsContext)
     const [showMenu, setShowMenu] = useState(false)
     const menuRef = useRef(null)
     const { name, ipAddress, type, connectionMethod, lastConnected } = host;
+    const navigate = useNavigate()
 
     // Icons for different device types
     const typeIcons = {
@@ -18,33 +22,43 @@ const HostCard = ({ host, refetchHosts,groupNames }) => {
         other: <HardDrive size={20} className="text-gray-400" />,
     };
 
+    const handleConnect = () => {
+        addSession({host:ipAddress, port:22, username:"farooqui", password:"jsttstaa34132-"})
+        navigate("/sessions")
+    }
+
     const handleDelete = async (e) => {
-        const response = await axios.delete(`http://localhost:5000/api/hosts/${host._id}`)
-        if(response.status == 200){
+        const response = await axios.delete(`http://localhost:5000/api/hosts/${host._id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+        if (response.status == 200) {
             refetchHosts()
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
+        //console.log("Host",host)
         const handleOutSideClick = (event) => {
-            if(menuRef.current && !menuRef.current.contains(event.target)){
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setShowMenu(false)
             }
         }
 
         document.addEventListener("mousedown", handleOutSideClick)
 
-        return ()=> {document.removeEventListener("mousedown", handleOutSideClick)}
-    },[])
+        return () => { document.removeEventListener("mousedown", handleOutSideClick) }
+    }, [])
 
 
     return (
         <div className="relative group bg-gray-800 text-white p-4 rounded-lg shadow-md border border-gray-700">
-            <span className="hidden group-hover:block absolute top-4 right-2 text-white opacity-40 cursor-pointer hover:bg-gray-400/80 p-1 rounded-md" onClick={()=>setShowMenu(!showMenu)} ><EllipsisVertical size={16}  /></span>
+            <span className="hidden group-hover:block absolute top-4 right-2 text-white opacity-40 cursor-pointer hover:bg-gray-400/80 p-1 rounded-md" onClick={() => setShowMenu(!showMenu)} ><EllipsisVertical size={16} /></span>
             {showMenu && <div ref={menuRef} className="absolute bg-gray-900/80 top-4 right-6 border border-gray-700 rounded-md">
                 <ul className="text-xs text-gray-400">
-                    <Link><li className="px-4 py-2 hover:bg-gray-700">Connect</li></Link>
-                    <Link to={`edit/${host._id}`} state={{host,groupNames}}><li className="px-4 py-2 hover:bg-gray-700 border-y border-gray-700">Edit</li></Link>
+                    <button onClick={handleConnect}><li className="px-4 py-2 hover:bg-gray-700">Connect</li></button>
+                    <Link to={`edit/${host._id}`} state={{ host, groupNames }}><li className="px-4 py-2 hover:bg-gray-700 border-y border-gray-700">Edit</li></Link>
                     <button onClick={handleDelete}><li className="px-4 py-2 hover:bg-gray-700">Delete</li></button>
                 </ul></div>}
             <div className="flex items-center gap-3">
