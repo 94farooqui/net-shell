@@ -1,23 +1,30 @@
 const mongoose = require('mongoose');
 
 const HostSchema = new mongoose.Schema({
-  name: { 
-    type: String, 
-    required: true 
+  name: {
+    type: String,
+    required: true
   },
-  ipAddress: { 
-    type: String, 
+  ipAddress: {
+    type: String,
     required: true,
-    unique: true 
+    unique: true
   },
-  type: { 
-    type: String, 
+  type: {
+    type: String,
     enum: ['Router', 'Switch', 'Firewall', 'Server', 'Other'],
-    required: true 
+    required: true
   },
   credentials: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Credential',
+    validate: {
+      validator: function (value) {
+        // Validating if it's a valid ObjectId or null
+        return mongoose.Types.ObjectId.isValid(value) || value === null;
+      },
+      message: 'credentials must be either a valid ObjectId or null.'
+    },
     default: null
   },
   owner: {
@@ -28,6 +35,13 @@ const HostSchema = new mongoose.Schema({
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'HostGroup',
+    validate: {
+      validator: function (value) {
+        // Validating if it's a valid ObjectId or null
+        return mongoose.Types.ObjectId.isValid(value) || value === null;
+      },
+      message: 'group must be either a valid ObjectId or null.'
+    },
     default: null
   },
   connectionMethod: {
@@ -37,15 +51,11 @@ const HostSchema = new mongoose.Schema({
   },
   description: String,
   lastConnected: Date
-}, { 
+}, {
   timestamps: true,
   methods: {
     // Method to safely mask sensitive information
-    toJSON() {
-      const obj = this.toObject();
-      delete obj.credentials;
-      return obj;
-    }
+
   }
 });
 

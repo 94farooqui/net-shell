@@ -12,22 +12,6 @@ import axios from "axios";
 //   { id: 4, cred_name: "Dev Server", username: "developer", ip_url: "dev.example.com", comment: "Development environment" },
 // ];
 
-const credsByType = [
-  {
-    type: "SSH",
-    creds: [],
-  },
-  {
-    type: "Secret Key",
-    creds: [],
-  },
-  {
-    type: "Website Credentials",
-    creds: [],
-  },
-];
-
-
 
 const CredentialsManager = () => {
   const token = localStorage.getItem("net_shell_token");
@@ -40,7 +24,7 @@ const CredentialsManager = () => {
 
   const getCredentials = async () => {
     try {
-      console.log("Fetching...");
+      //console.log("Fetching...");
       const response = await axios.get(
         "http://localhost:5000/api/credentials",
         {
@@ -50,14 +34,7 @@ const CredentialsManager = () => {
         }
       );
       if (response.status == 200) {
-        console.log("received credentials", response.data);
-        // credsByType.forEach((credType) => {
-        //   response.data.forEach((cred) => {
-        //     if (credType.type == cred.type) {
-        //       credType.creds.push(cred);
-        //     }
-        //   });
-        // });
+
         setCredentials(response.data);
         //console.log(credsByType)
         setFilteredCredentials(response.data.filter(type => type.creds.length >0))
@@ -73,7 +50,7 @@ const CredentialsManager = () => {
 
   const handleSearchInputChange = (e) => {
     const searchValue = e.target.value.toLocaleLowerCase()
-    console.log(searchValue)
+    //console.log(searchValue)
     setSearchFilter(searchValue)
 
     if (!searchValue) {
@@ -85,10 +62,9 @@ const CredentialsManager = () => {
     if(!searchFilter){
       setFilteredCredentials(credentials)
     }
-
     const filtered = credentials.map(credential => ({type: credential.type, creds: credential.creds.filter(cred=> cred.name.toLowerCase().includes(searchFilter))})).filter(item => item.creds.length > 0)
     setFilteredCredentials(filtered)
-    console.log("Filtered", filtered)
+    //console.log("Filtered", filtered)
   },[searchFilter])
 
   useEffect(() => {

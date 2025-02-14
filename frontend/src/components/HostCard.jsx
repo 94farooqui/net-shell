@@ -10,7 +10,7 @@ const HostCard = ({ host, refetchHosts, groupNames }) => {
     const { addSession } = useContext(SessionsContext)
     const [showMenu, setShowMenu] = useState(false)
     const menuRef = useRef(null)
-    const { name, ipAddress, type, connectionMethod, lastConnected } = host;
+    const { name, ipAddress, type, credentials,connectionMethod, lastConnected } = host;
     const navigate = useNavigate()
 
     // Icons for different device types
@@ -66,7 +66,7 @@ const HostCard = ({ host, refetchHosts, groupNames }) => {
                 <h3 className="text-base font-semibold">{name}</h3>
             </div>
             <p className="text-gray-400 text-sm mt-1">{ipAddress}</p>
-            <p className="text-gray-300 text-sm mt-1">Connection: {connectionMethod}</p>
+            <p className="text-gray-300 text-sm mt-1">Credentials: {credentials ? credentials.name :"none"}</p>
             {lastConnected && <p className="text-gray-500 text-xs mt-2">Last Connected: {lastConnected}</p>}
         </div>
     );

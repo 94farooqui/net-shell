@@ -50,6 +50,7 @@ const handleAddHostSubmit = async (e) => {
         }
     })
     if(response.status == 201){
+        console.log(response.data)
         navigate("/hosts")
     }
 }

@@ -10,54 +10,25 @@ const getHosts = async (req, res) => {
     //const groups = await HostGroup.find({owner:req.user.userId, $expr: {$gt : [{$size: "$devices"}, 0]}}).populate("devices");
 
 
-    const groups = await HostGroup.find({ owner: req.user.userId }).populate({
-      path: 'devices',
-      populate: { path: 'credentials' }
-    }).sort({name:1});
-    console.log("Groups", JSON.stringify(groups))
+    const groups = await HostGroup.find({ owner: req.user.userId }).sort({name:1}).populate({path:"devices", populate:{path:"credentials",select:"type name"}});
+    console.log("Groups", groups)
+    groups.forEach(group=> console.log(group))
 
 
     return res.status(200).json(groups);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-  // try {
-  //   console.log("Request for hosts")
-  //   const hosts = await Host.find({owner:req.user.userId}).populate("group");
-  //   return res.status(200).json(hosts);
-  // } catch (error) {
-  //   console.log("Error", error)
-  //   res.status(500).json({ message: error.message });
-  // }
-
-
-  // try {
-  //   // Find the user and populate the groups they belong to
-  //   const user = await User.findById(req.user.userId).populate('groups');
-  //   if (!user) {
-  //     return { success: false, message: "User not found" };
-  //   }
-
-  //   // Extract the group IDs from the user's groups
-  //   const groupIds = user.groups.map(group => group._id);
-
-  //   // Find all hosts that belong to the user's groups
-  //   const hosts = await Host.find({ group: { $in: groupIds } });
-  //   return res.status(200).json(hosts);
-  //   //return { success: true, data: hosts };
-  // } catch (error) {
-  //   console.error("Error fetching hosts:", error);
-  //   return { success: false, message: "Server error" };
-  // }
 
 };
 
 // Get a single host by ID
 const getOneHost = async (req, res) => {
   try {
-    const host = await Host.findById(req.params.HostId).populate("group");
+    const host = await Host.findById(req.params.HostId).populate("group").populate("credentials","type name");
     if (!host) return res.status(404).json({ message: "Host not found" });
-    res.status(200).json(host);
+    console.log("Host details", host)
+    return res.status(200).json(host);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -65,25 +36,28 @@ const getOneHost = async (req, res) => {
 
 // Add a new host
 const addOneHost = async (req, res) => {
-
+  console.log("Add host")
   // Re-Write all the logic to add a host
 
   try{
     const newHost = await Host({...req.body, owner: req.user.userId})
-    await newHost.save
+    await newHost.save()
+    console.log(newHost)
+
     if(!newHost){
       return res.status(500).json({error:"Something went wrong"})
     }
+
     const hostGroup = await HostGroup.findById(req.body.group)
     hostGroup.devices.push(newHost._id)
     await hostGroup.save()
     const user = await User.findById(req.user.userId)
     user.devices.push(newHost._id)
     await user.save()
-    return res.status(200).json(newHost)
+    return res.status(201).json(newHost)
   }
   catch(error){
-
+    console.log("Error",error)
   }
 
 
@@ -130,7 +104,7 @@ const addOneHost = async (req, res) => {
 
 // Update an existing host by ID
 const updateOneHost = async (req, res) => {
-  // console.log("Update request", req.body)
+  console.log("Update request", req.body)
   try {
     // const updatedHost = await Host.findByIdAndUpdate(req.params.HostId, req.body, { new: true, runValidators: true });
     // if (!updatedHost) return res.status(404).json({ message: "Host not found" });

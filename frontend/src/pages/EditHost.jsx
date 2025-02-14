@@ -20,12 +20,30 @@ const token = localStorage.getItem("net_shell_token")
 
 const EditHost = () => {
     const { hostId } = useParams()
+    //using custom hooks
+    const { loading, error, credentials } = useCredentials()
     const token = localStorage.getItem("net_shell_token");
     const [newHost, setNewHost] = useState(null)
-    const [hostLoading,setHostLoading] = useState(true)
-    const [hostError,setHostError] = useState("")
-    const [hostGroups,setHostGroups]=useState()
+    const [hostLoading, setHostLoading] = useState(true)
+    const [hostError, setHostError] = useState("")
+    const [hostGroups, setHostGroups] = useState([])
+    const [hostCredentials,setHostCredentials]=useState([])
     const navigate = useNavigate()
+
+    const handleUpdateHostSubmit = async (e) => {
+        e.preventDefault()
+        console.log("UPdated host",newHost)
+        const response = await axios.put(`http://localhost:5000/api/hosts/${newHost._id}`, newHost, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        if (response.status == 200) {
+            console.log("received response",response.data)
+            navigate("/hosts")
+        }
+    }
+
 
     const getHostDetails = async () => {
         try {
@@ -34,30 +52,18 @@ const EditHost = () => {
                     Authorization: `Bearer ${token}`
                 }
             })
-            if (response.status == 200) {
-                console.log(response.data)
-                setNewHost(response.data)
-            }
-        }
-        catch (error) {
-            console.log(error)
-        }
-        finally {
-            setHostLoading(false)
-        }
-    }
-
-    const getHostGroups = async () => {
-        try {
-            setHostLoading(true)
-            const response = await axios.get(`http://localhost:5000/api/groups`, {
+            const groupResponse = await axios.get(`http://localhost:5000/api/groups`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
+            if (groupResponse.status == 200) {
+                console.log(groupResponse.data)
+                setHostGroups(groupResponse.data)
+            }
             if (response.status == 200) {
-                console.log(response.data)
-                setHostGroups(response.data)
+                console.log("Host details",response.data, response.data.name)
+                setNewHost(response.data)
             }
         }
         catch (error) {
@@ -70,40 +76,23 @@ const EditHost = () => {
 
     useEffect(() => {
         getHostDetails()
+        //getHostGroups()
     }, [])
-
-    //console.log(host , groupNames)
-
-
-    //using custom hooks
-    const { loading, error, credentials } = useCredentials()
-
-
-    const handleUpdateHostSubmit = async (e) => {
-        e.preventDefault()
-        console.log(newHost)
-        const response = await axios.put(`http://localhost:5000/api/hosts/${newHost._id}`, newHost, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-        if (response.status == 200) {
-            navigate("/hosts")
-        }
-    }
 
     useEffect(() => {
         // console.log("New Host Credential", newHost.credentials)
-        // console.log("Credentials", credentials)
+        console.log("Credentials", credentials)
+        setHostCredentials(credentials.find(credential => credential.type == "SSH"))
         // console.log("Host", host)
     }, [credentials])
 
 
-    if(hostLoading){
+
+    if (hostLoading) {
         return <p>Loading...</p>
     }
 
-    if(hostError){
+    if (hostError) {
         return <p>Error </p>
     }
     return (
@@ -127,13 +116,14 @@ const EditHost = () => {
                 <div className='flex-1 flex flex-col gap-y-2'>
                     <label>Group</label>
                     <select value={newHost.group} className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, group: e.target.value })}>
-                        {hostGroups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
+                        {hostGroups && hostGroups.map(group => <option key={group._id} value={group._id}>{group.name}</option>)}
                     </select>
                 </div>
-                {credentials.length > 0 && <div className='flex-1 flex flex-col gap-y-2'>
+                {hostCredentials && <div className='flex-1 flex flex-col gap-y-2'>
                     <label>Credentials</label>
-                    <select value={newHost.credentials} className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, credentials: e.target.value })}>
-                        {credentials.find(credential => credential.type == "SSH").creds.map(cred => <option key={cred._id} value={cred._id}>{cred.name}</option>)}
+                    <select defaultValue={newHost.credentials} className='w-full bg-gray-800 p-2 rounded-md border border-gray-700' onChange={(e) => setNewHost({ ...newHost, credentials: e.target.value })}>
+                        <option value="#DEFAULT">None</option>
+                        {hostCredentials.creds.map(cred => <option key={cred._id} value={cred._id}>{cred.name}</option>)}
                     </select>
                 </div>}
 

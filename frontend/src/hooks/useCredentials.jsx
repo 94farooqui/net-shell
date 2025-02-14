@@ -1,23 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
-const credsByType = [
-    {
-        type: "SSH",
-        creds: [],
-    },
-    {
-        type: "Secret Key",
-        creds: [],
-    },
-    {
-        type: "Website Credentials",
-        creds: [],
-    },
-];
-
-
-
 const token = localStorage.getItem("net_shell_token");
 
 const useCredentials = () => {
@@ -29,7 +12,7 @@ const useCredentials = () => {
     useEffect(()=>{
         const getCredentials = async () => {
             try {
-                console.log("Fetching...");
+                //console.log("Fetching...");
                 const response = await axios.get(
                     "http://localhost:5000/api/credentials",
                     {
@@ -40,15 +23,15 @@ const useCredentials = () => {
                 );
                 if (response.status == 200) {
                     console.log("received credentials", response.data);
-                    credsByType.forEach((credType) => {
-                        response.data.forEach((cred) => {
-                            if (credType.type == cred.type) {
-                                credType.creds.push(cred);
-                            }
-                        });
-                    });
-                    setCredentials(credsByType);
-                    console.log("Creds by type",credsByType)
+                    // credsByType.forEach((credType) => {
+                    //     response.data.forEach((cred) => {
+                    //         if (credType.type == cred.type) {
+                    //             credType.creds.push(cred);
+                    //         }
+                    //     });
+                    // });
+                    setCredentials(response.data);
+                    console.log("Creds by type",credentials)
                     //setCredentials(response.data)
                     setError("");
                 }
