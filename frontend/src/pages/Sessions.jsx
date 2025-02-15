@@ -3,26 +3,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import TerminalShell from '../components/TerminalShell'
 import { SessionsContext } from '../context/SessionsProvider'
 
-const SampleSessions = [
-    {
-        name: "core.sw1.abc.com",
-        ipAddress: "192.168.70.104"
-    },
-    {
-        name: "dist.sw1.abc.com",
-        ipAddress: "192.168.70.120"
-    },
-    {
-        name: "core.sw2.abc.com",
-        ipAddress: "192.168.70.104"
-    },
-    {
-        name: "dist.sw2.abc.com",
-        ipAddress: "192.168.70.120"
-    },
-]
-
 const Sessions = () => {
+    console.log("Sessions page mounted")
     //const [activeSessions, setActiveSessions] = useState(SampleSessions)
 
     // const [sessions, setSessions] = useState([]);

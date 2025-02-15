@@ -23,7 +23,7 @@ const Hosts = () => {
   useEffect(() => {
     const filteredGroup = hostGroups.map(group => ({ ...group, devices: group.devices.filter(device => (device.name.toLowerCase().includes(searchFilter) || device.ipAddress.includes(searchFilter))) })).filter(group => group.devices.length > 0)
     if (filteredGroup) {
-      console.log("found Group", filteredGroup)
+      //console.log("found Group", filteredGroup)
       setFilteredHostGroups(filteredGroup)
     }
   }, [searchFilter])
@@ -46,7 +46,7 @@ const Hosts = () => {
       },
     });
     if (response.status == 200) {
-      console.log(response.data);
+      //console.log(response.data);
 
 
       setGroupNames(response.data.map(group => ({ id: group._id, name: group.name })))

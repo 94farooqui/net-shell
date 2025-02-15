@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import { X } from "lucide-react";
-import "xterm/css/xterm.css";
-import { useXTerm } from "react-xtermjs";
 import TerminalShell from "../components/TerminalShell";
-import { io } from 'socket.io-client';
 
 const defaultSSHConfig = {
   host: "",
@@ -17,19 +12,15 @@ const defaultSSHConfig = {
 
 
 // Sample saved credentials (Replace with API call)
-const savedCredentials = [
-  { id: "1", name: "Router Admin", username: "admin", password: "admin123" },
-  { id: "2", name: "Switch User", username: "user", password: "switch456" },
-  { id: "3", name: "Mubasshir User", username: "farooqui", password: "jsttstaa34132-" },
-];
+// const savedCredentials = [
+//   { id: "1", name: "Router Admin", username: "admin", password: "admin123" },
+//   { id: "2", name: "Switch User", username: "user", password: "switch456" },
+//   { id: "3", name: "Mubasshir User", username: "farooqui", password: "jsttstaa34132-" },
+// ];
 
 const TerminalPage = () => {
 
   const [error, setError] = useState("")
-
-  const termRef = useRef(null);
-  const terminalInstance = useRef(null);
-  const fitAddon = useRef(new FitAddon());
 
   const [sshConfig, setSSHConfig] = useState(defaultSSHConfig)
 
@@ -53,14 +44,14 @@ const TerminalPage = () => {
   // }, []);
 
   // Handle Saved Credentials Selection
-  useEffect(() => {
-    if (selectedCred) {
-      const cred = savedCredentials.find((cred) => cred.id === selectedCred);
-      if (cred) {
-        setSSHConfig({ ...sshConfig, username: cred.username, password: cred.password });
-      }
-    }
-  }, [selectedCred]);
+  // useEffect(() => {
+  //   if (selectedCred) {
+  //     const cred = savedCredentials.find((cred) => cred.id === selectedCred);
+  //     if (cred) {
+  //       setSSHConfig({ ...sshConfig, username: cred.username, password: cred.password });
+  //     }
+  //   }
+  // }, [selectedCred]);
 
   // Handle Connect Button Click
   const handleConnect = () => {

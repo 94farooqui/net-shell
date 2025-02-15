@@ -40,7 +40,7 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<RootLayout />}>
                 <Route index element={<Home />} />
-                <Route path="terminal" element={<Terminal />} />
+                {/* <Route path="terminal" element={<Terminal />} /> */}
                 <Route path="hosts/edit/:hostId" element={<EditHost />} />
                 <Route path="hosts/new" element={<NewHost />} />
                 <Route path="hosts" element={<Hosts />} />

@@ -3,20 +3,21 @@ const HostGroup = require("../models/HostGroup");
 const User = require("../models/User");
 
 const getHosts = async (req, res) => {
-  console.log("user ", req.user)
+  //console.log("user ", req.user)
   try {
-    console.log("request for group names for user", req.user.userId)
+    //console.log("request for group names for user", req.user.userId)
     //const user = await User.findById(req.user.userId).populate({ path: 'groups', select: 'name' });
     //const groups = await HostGroup.find({owner:req.user.userId, $expr: {$gt : [{$size: "$devices"}, 0]}}).populate("devices");
 
 
     const groups = await HostGroup.find({ owner: req.user.userId }).sort({name:1}).populate({path:"devices", populate:{path:"credentials",select:"type name username password"}});
-    console.log("Groups", groups)
-    groups.forEach(group=> console.log(group))
+    //console.log("Groups", groups)
+    //groups.forEach(group=> console.log(group))
 
 
     return res.status(200).json(groups);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: error.message });
   }
 
@@ -36,13 +37,13 @@ const getOneHost = async (req, res) => {
 
 // Add a new host
 const addOneHost = async (req, res) => {
-  console.log("Add host")
+  //console.log("Add host")
   // Re-Write all the logic to add a host
 
   try{
     const newHost = await Host({...req.body, owner: req.user.userId})
     await newHost.save()
-    console.log(newHost)
+    //console.log(newHost)
 
     if(!newHost){
       return res.status(500).json({error:"Something went wrong"})
@@ -58,6 +59,7 @@ const addOneHost = async (req, res) => {
   }
   catch(error){
     console.log("Error",error)
+    return res.status(404).json({error:"Unable to add"})
   }
 
 
@@ -104,15 +106,15 @@ const addOneHost = async (req, res) => {
 
 // Update an existing host by ID
 const updateOneHost = async (req, res) => {
-  console.log("Update request", req.body)
+  //console.log("Update request", req.body)
   try {
     // const updatedHost = await Host.findByIdAndUpdate(req.params.HostId, req.body, { new: true, runValidators: true });
     // if (!updatedHost) return res.status(404).json({ message: "Host not found" });
     const newHostData = req.body
     const oldHostData = await Host.findById(req.body._id)
 
-    console.log("Old host data" , oldHostData)
-    console.log("New host data" , newHostData)
+    //console.log("Old host data" , oldHostData)
+    //console.log("New host data" , newHostData)
 
     //updating corresponding host group
     if (oldHostData.group !== newHostData.group) {
@@ -136,6 +138,7 @@ const deleteOneHost = async (req, res) => {
     if (!deletedHost) return res.status(404).json({ message: "Host not found" });
     return res.status(200).json({ message: "Host deleted successfully" });
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: error.message });
   }
 };

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu,SquareTerminal, LayoutDashboard,AppWindow, Server, Users, Key, History, Save, Notebook } from "lucide-react";
 
 const Sidebar = () => {
+
   const [isOpen, setIsOpen] = useState(true);
 
   const menuItems = [

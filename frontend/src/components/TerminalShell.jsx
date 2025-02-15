@@ -11,77 +11,96 @@ import { SessionsContext } from '../context/SessionsProvider';
 
 
 
-const socket = io('http://localhost:5000');
-const sessionBuffers = {};
 
-const TerminalShell = ({sshConfig,sessionId}) => {
-  const {activeSession} = useContext(SessionsContext)
-    const terminalRef = useRef(null);
-    const terminal = useRef(null); // Store the terminal instance
-    const fitAddon = useRef(null);
-    const searchAddon = useRef(null);
-    const webLinksAddon = useRef(null);
+const TerminalShell = ({ sshConfig, sessionId }) => {
 
-    useEffect(() => {
-        terminal.current = new Terminal(TerminalShellOptions);
-        fitAddon.current = new FitAddon();
-        searchAddon.current = new SearchAddon();
-        webLinksAddon.current = new WebLinksAddon();
-    
-        terminal.current.loadAddon(fitAddon.current);
-        terminal.current.loadAddon(searchAddon.current);
-        terminal.current.loadAddon(webLinksAddon.current);
-    
-        terminal.current.open(terminalRef.current);
-    
-      //   // Fit the terminal to the container
-        fitAddon.current.fit();
-    
-      //   // Example: Write some text to the terminal
-      //   terminal.current.write('Hello from xterm.js!\r\n');
-      if(sessionBuffers[activeSession.sessionId]){
-        terminal.current.write(sessionBuffers[activeSession.sessionId])
-      }
-      else {
-        sessionBuffers[activeSession.sessionId] = "";
-      }
+  const socket = io('http://localhost:5000');
+  console.log("socket connection established")
+  const sessionBuffers = {};
+
+  const { activeSession } = useContext(SessionsContext)
+  const terminalRef = useRef(null);
+  const terminal = useRef(null); // Store the terminal instance
+  const fitAddon = useRef(null);
+  const searchAddon = useRef(null);
+  const webLinksAddon = useRef(null);
+
+  // useEffect(()=>{
+  //   if(sessionBuffers[activeSession.sessionId]){
+  //     terminal.current.write(sessionBuffers[activeSession.sessionId])
+  //     console.log(sessionBuffers[activeSession.sessionId])
+  //     terminal.current.focus();
+  //   }
+  //   else {
+  //     sessionBuffers[activeSession.sessionId] = "";
+  //   }
+  // },[activeSession])
+
+  useEffect(() => {
+    terminal.current = new Terminal(TerminalShellOptions);
+    fitAddon.current = new FitAddon();
+    searchAddon.current = new SearchAddon();
+    webLinksAddon.current = new WebLinksAddon();
+
+    terminal.current.loadAddon(fitAddon.current);
+    terminal.current.loadAddon(searchAddon.current);
+    terminal.current.loadAddon(webLinksAddon.current);
+
+    terminal.current.open(terminalRef.current);
+
+    //   // Fit the terminal to the container
+    fitAddon.current.fit();
+
+    //   // Example: Write some text to the terminal
+    //   terminal.current.write('Hello from xterm.js!\r\n');
+    if (sessionBuffers[activeSession.sessionId]) {
+      terminal.current.write(sessionBuffers[activeSession.sessionId])
+      //console.log(sessionBuffers[activeSession.sessionId])
+      terminal.current.focus();
+    }
+    else {
+      sessionBuffers[activeSession.sessionId] = "";
+    }
 
 
 
-      //   console.log("Conneting to switch",sshConfig)
-      //  terminal.current.writeln("Welcome to NetShell")
-    
-       socket.emit('connectToSSH', activeSession.sshConfig);
-    
-       // Handle data from SSH server
-       socket.on('sshData', (data) => {
-        terminal.current.write(data);
-       });
+    console.log("Conneting to switch", sshConfig)
+    //  terminal.current.writeln("Welcome to NetShell")
 
-        // Send user input to SSH server
-       terminal.current.onData((data) => {
-          socket.emit('sshCommand', data);
-        });
+    socket.emit('connectToSSH', activeSession.sshConfig);
 
-        window.addEventListener('resize', () => {
-            fitAddon.current.fit();
-          });
-    
-        // Cleanup
-        return () => {
-         //terminal.current.dispose();
-          socket.disconnect();
-        //   window.removeEventListener('resize', () => {
-        //     fitAddon.current.fit(); // Remove the listener
-        // });
-        };
-      }, []);
+    socket.on('sshConnection', connctionStatus => { if (connctionStatus) console.log("Connection established") });
 
-      return (
-        <div className='w-full'>
-          <div ref={terminalRef} style={{ width: "100%", height: "100%" }}></div>
-        </div>
-      );
+    // Handle data from SSH server
+    socket.on('sshData', (data) => {
+      terminal.current.write(data);
+      sessionBuffers[activeSession.sessionId] += data
+    });
+
+    // Send user input to SSH server
+    terminal.current.onData((data) => {
+      socket.emit('sshCommand', data);
+    });
+
+    window.addEventListener('resize', () => {
+      fitAddon.current.fit();
+    });
+
+    // Cleanup
+    return () => {
+      terminal.current.dispose();
+      socket.disconnect();
+      window.removeEventListener('resize', () => {
+        fitAddon.current.fit(); // Remove the listener
+      });
+    };
+  }, []);
+
+  return (
+    <div className='w-full'>
+      <div ref={terminalRef} style={{ width: "100%", height: "100%" }}></div>
+    </div>
+  );
 }
 
 export default TerminalShell

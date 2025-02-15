@@ -6,6 +6,7 @@ const getCommands = async (req, res) => {
     const commands = await Command.find({ owner: req.user.userId });
     res.status(200).json(commands);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -17,18 +18,20 @@ const getOneCommand = async (req, res) => {
     if (!command) return res.status(404).json({ message: "Command not found" });
     res.status(200).json(command);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };
 
 // Add a new command
 const addCommand = async (req, res) => {
-  console.log(req.body, req.user)
+  //console.log(req.body, req.user)
   try {
     const newCommand = new Command({ ...req.body, owner: req.user.userId });
     const savedCommand = await newCommand.save();
     res.status(201).json(savedCommand);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -40,6 +43,7 @@ const updateOneCommand = async (req, res) => {
     if (!updatedCommand) return res.status(404).json({ message: "Command not found" });
     res.status(200).json(updatedCommand);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -51,6 +55,7 @@ const deleteOneCommand = async (req, res) => {
     if (!deletedCommand) return res.status(404).json({ message: "Command not found" });
     return res.status(200).json({ message: "Command deleted successfully" });
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };

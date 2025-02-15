@@ -9,6 +9,7 @@ const historyData = [
 ];
 
 const History = () => {
+  console.log("History page loaded")
   return (
     <div className="p-6">
       {/* Navbar */}

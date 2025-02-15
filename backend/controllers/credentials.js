@@ -8,7 +8,7 @@ const getCreds = async (req, res) => {
     //get Cred Types
     let types = []
     creds.forEach(cred => types.includes(cred.type) ? "" : types.push(cred.type)  ) 
-    console.log("Cred Types", types)
+    //console.log("Cred Types", types)
 
     const credsByType = types.map(type => ({type: type, creds:[]}))
     credsByType.forEach((credType) => {
@@ -22,7 +22,7 @@ const getCreds = async (req, res) => {
 
     res.status(200).json(credsByType);
   } catch (error) {
-    console.log(error)
+    //console.log(error)
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -34,13 +34,14 @@ const getOneCred = async (req, res) => {
     if (!cred) return res.status(404).json({ message: "Credential not found" });
     res.status(200).json(cred);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };
 
 // Add a new credential
 const addCred = async (req, res) => {
-  console.log("Rquest for add Cred")
+  //console.log("Rquest for add Cred")
   try {
     const newCred = new Credential({...req.body, owner: req.user.userId});
     const savedCred = await newCred.save();
@@ -58,6 +59,7 @@ const updateOneCred = async (req, res) => {
     if (!updatedCred) return res.status(404).json({ message: "Credential not found" });
     res.status(200).json(updatedCred);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -69,6 +71,7 @@ const deleteOneCred = async (req, res) => {
     if (!deletedCred) return res.status(404).json({ message: "Credential not found" });
     res.status(200).json({ message: "Credential deleted successfully" });
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: "Server error" });
   }
 };

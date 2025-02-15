@@ -7,18 +7,20 @@ const getGroups = async (req, res) => {
     const groups = await HostGroup.find({owner: req.user.userId}).populate("devices owner");
     res.status(200).json(groups);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: error.message });
   }
 };
 
 const getGroupNames = async (req, res) => {
   try {
-    console.log("request for group names for user", req.user.userId)
+    //console.log("request for group names for user", req.user.userId)
     //const user = await User.findById(req.user.userId).populate({ path: 'groups', select: 'name' });
     const groups = await HostGroup.find({owner:req.user.userId})
-    console.log("Groups",groups)
+    //console.log("Groups",groups)
     return res.status(200).json(groups);
   } catch (error) {
+    console.log("error", error)
     res.status(500).json({ message: error.message });
   }
 };
@@ -37,7 +39,7 @@ const getOneGroup = async (req, res) => {
 // Add a new host group
 const addOneGroup = async (req, res) => {
 
-  console.log(req.body)
+  //console.log(req.body)
   try {
     const newGroup = new HostGroup({ ...req.body, owner: req.user.userId });
     const groupAdded = await newGroup.save();
@@ -66,7 +68,7 @@ const updateOneGroup = async (req, res) => {
 
 // Delete a host group by ID
 const deleteOneGroup = async (req, res) => {
-  console.log(req.params.GroupId)
+  //console.log(req.params.GroupId)
   try {
     const deletedGroup = await HostGroup.findByIdAndDelete(req.params.GroupId);
     if (!deletedGroup) return res.status(404).json({ message: "Group not found" });
