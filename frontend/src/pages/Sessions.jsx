@@ -30,7 +30,7 @@ const Sessions = () => {
     const {sessions,setSessions,activeSession,setActiveSession} = useContext(SessionsContext)  
 
     useEffect(()=>{
-
+        console.log("Sessions",sessions,"activeSession",activeSession, "From Session page")
     },[])
 
 

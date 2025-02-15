@@ -5,7 +5,7 @@ const CredentialCard = ({ credential }) => {
     const { name, username, password, key,website, notes } = credential;
   
     return (
-      <div className="h-full flex flex-col justify-between gap-y-2 bg-gray-800 text-white p-4 rounded-lg shadow-md border border-gray-700">
+      <div className="h-full flex flex-col gap-y-2 bg-gray-800 text-white p-4 rounded-lg shadow-md border border-gray-700">
         <div className="flex items-center gap-3">
           <FileLock size={20} className="text-yellow-400" />
           <h3 className="text-base font-semibold">{name}</h3>

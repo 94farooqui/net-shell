@@ -8,14 +8,19 @@ const SessionsProvider = ({ children }) => {
     const [sessions, setSessions] = useState([])
     const [activeSession, setActiveSession] = useState(null)
 
-    const addSession = (sshConfig) => {
+    const addSession = (host) => {
         const newSession = {
-            sessionId: uuidv4(),
-            sshConfig: sshConfig
+            sessionId: host._id,
+            sshConfig: {
+                host:host.ipAddress,
+                port:22, 
+                username:host.credentials.username,
+                password:host.credentials.password
+            }
         };
         console.log(newSession)
         setSessions([...sessions, newSession]);
-        setActiveSession(newSession.sessionId);
+        setActiveSession(newSession);
     };
 
     const removeSession = (id) => {

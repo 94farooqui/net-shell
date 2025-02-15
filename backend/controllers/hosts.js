@@ -10,7 +10,7 @@ const getHosts = async (req, res) => {
     //const groups = await HostGroup.find({owner:req.user.userId, $expr: {$gt : [{$size: "$devices"}, 0]}}).populate("devices");
 
 
-    const groups = await HostGroup.find({ owner: req.user.userId }).sort({name:1}).populate({path:"devices", populate:{path:"credentials",select:"type name"}});
+    const groups = await HostGroup.find({ owner: req.user.userId }).sort({name:1}).populate({path:"devices", populate:{path:"credentials",select:"type name username password"}});
     console.log("Groups", groups)
     groups.forEach(group=> console.log(group))
 

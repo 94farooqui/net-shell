@@ -83,9 +83,9 @@ io.on('connection', (socket) => {
       })
       .connect({
           ...config, // Your existing SSH config (host, port, username, password)
-          algorithms: {
-            kex: ['diffie-hellman-group14-sha1'], // Add the required KEX algorithm
-          },
+          // algorithms: {
+          //   kex: ['diffie-hellman-group14-sha1'], // Add the required KEX algorithm
+          // },
         });
   });
 
